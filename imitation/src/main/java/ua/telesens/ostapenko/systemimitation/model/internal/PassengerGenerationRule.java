@@ -1,6 +1,6 @@
 package ua.telesens.ostapenko.systemimitation.model.internal;
 
-import ua.telesens.ostapenko.systemimitation.api.StationRule;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,23 +10,27 @@ import java.util.*;
  * @author root
  * @since 10.12.15
  */
-public class BusStationRule implements StationRule {
+@ToString(exclude = "schedule")
+public class PassengerGenerationRule {
 
-    private int limitPassenger;
+    private int limit;
     private LocalTime starting;
     private LocalTime end;
     private LocalTime interval;
     private List<LocalTime> schedule = Collections.emptyList();
 
-    public BusStationRule(int limitPassenger, LocalTime starting, LocalTime end, LocalTime interval) {
-        this.limitPassenger = limitPassenger;
+    private PassengerGenerationRule(int limit, LocalTime starting, LocalTime end, LocalTime interval) {
+        this.limit = limit;
         this.starting = starting;
         this.end = end;
         this.interval = interval;
         fillSchedule();
     }
 
-    @Override
+    public static PassengerGenerationRule of(int limit, LocalTime starting, LocalTime end, LocalTime interval) {
+        return new PassengerGenerationRule(limit, starting, end, interval);
+    }
+
     public boolean is(LocalTime time) {
         if (Objects.equals(time, starting) || Objects.equals(time, end)) {
             if (schedule.contains(time)) {
@@ -41,12 +45,11 @@ public class BusStationRule implements StationRule {
         return false;
     }
 
-    @Override
     public int execute(LocalDateTime time) {
         if (!is(time.toLocalTime())) {
             throw new IllegalStateException();
         }
-        return new Random().nextInt(limitPassenger);
+        return new Random().nextInt(limit);
     }
 
     private void fillSchedule() {

@@ -1,11 +1,6 @@
 package ua.telesens.ostapenko.systemimitation.api.observer;
 
-import ua.telesens.ostapenko.systemimitation.model.internal.Route;
-import ua.telesens.ostapenko.systemimitation.model.internal.ScheduleNode;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import ua.telesens.ostapenko.systemimitation.model.internal.ImitationEvent;
 
 /**
  * @author root
@@ -13,9 +8,9 @@ import java.util.Map;
  */
 public interface SystemImitationObserver {
 
-    void updateTime(LocalDateTime time, Map<Route, List<ScheduleNode>> schedule);
+    void updateEvent(ImitationEvent event);
 
     default void setObservable(SystemImitationObservable observable) {
-        observable.registerTransportObserver(this);
+        observable.register(this);
     }
 }

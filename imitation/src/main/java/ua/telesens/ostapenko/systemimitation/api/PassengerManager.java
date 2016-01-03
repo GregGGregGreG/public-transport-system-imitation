@@ -1,9 +1,9 @@
 package ua.telesens.ostapenko.systemimitation.api;
 
 
+import ua.telesens.ostapenko.systemimitation.model.internal.BusRouteDecorator;
 import ua.telesens.ostapenko.systemimitation.model.internal.Passenger;
-import ua.telesens.ostapenko.systemimitation.model.internal.Route;
-import ua.telesens.ostapenko.systemimitation.model.internal.RouteMovement;
+import ua.telesens.ostapenko.systemimitation.model.internal.RouteDirection;
 
 import javax.transaction.NotSupportedException;
 
@@ -13,8 +13,8 @@ import javax.transaction.NotSupportedException;
  */
 public interface PassengerManager {
 
-    void addPassenger(Route route, RouteMovement routeMovement, Passenger add) throws NotSupportedException;
+    void addPassenger(BusRouteDecorator busRoute, RouteDirection direction, Passenger add) throws NotSupportedException;
 
-    Passenger getPassenger(Route route, RouteMovement routeMovement);
+    Passenger getPassenger(BusRouteDecorator busRoute, RouteDirection direction);
 
 }

@@ -14,5 +14,4 @@ public interface SystemImitation {
 
     void status();
 
-    void addLogger(Logger logger);
 }

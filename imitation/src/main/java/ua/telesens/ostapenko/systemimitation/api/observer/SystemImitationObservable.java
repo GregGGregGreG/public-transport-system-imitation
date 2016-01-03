@@ -6,10 +6,10 @@ package ua.telesens.ostapenko.systemimitation.api.observer;
  */
 public interface SystemImitationObservable {
 
-    void registerTransportObserver(SystemImitationObserver observer);
+    SystemImitationObserver register(SystemImitationObserver observer);
 
-    void removeTransportObserver(SystemImitationObserver observer);
+    void remove(SystemImitationObserver observer);
 
-    void notifyTransportObservers();
+    void notifyAllObservers();
 
 }

@@ -3,17 +3,18 @@ package ua.telesens.ostapenko.systemimitation.model.internal;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import ua.telesens.ostapenko.systemimitation.api.decorator.StationPublic;
+
+import java.time.LocalTime;
 
 /**
  * @author root
- * @since 14.12.15
+ * @since 29.12.15
  */
-@Getter
 @RequiredArgsConstructor(staticName = "of")
+@Getter
 @ToString
-public class Passenger {
+public class ImitationEvent {
 
-    private final StationPublic station;
-
+    private final LocalTime time;
+    private final DayType dayType;
 }
