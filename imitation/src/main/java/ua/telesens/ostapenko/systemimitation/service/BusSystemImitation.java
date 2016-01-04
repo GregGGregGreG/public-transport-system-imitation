@@ -89,7 +89,7 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
     // FIXME: 30.12.15 Remove bad object create
     @Override
     public void notifyAllObservers() {
-        ImitationEvent event = ImitationEvent.of(currentTime.toLocalTime(), DayType.WORKDAY);
+        ImitationEvent event = createEvent();
         stations
                 .parallelStream()
                 .forEach(observer -> observer.updateEvent(event));
@@ -98,19 +98,12 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
                 .forEach(observer -> observer.updateEvent(event));
     }
 
-    // FIXME: 17.12.15 Add system statistic interface
-    public int getCountBus() {
-        return buses.size();
-    }
-
-    // FIXME: 17.12.15 Add system statistic interface
-    public int getCountStation() {
-        return stations.size();
+    private ImitationEvent createEvent() {
+        return ImitationEvent.of(currentTime.toLocalTime(), DayType.to(currentTime.getDayOfWeek()));
     }
 
     private void initRoutes(List<BusRoute> routes) {
         routes.parallelStream().forEach(route -> this.routes.add(BusRouteDecorator.of(route, this, SCHEDULE_MANAGER)));
-
     }
 
     private SystemImitationObserver addObserver(List<SystemImitationObserver> observers, SystemImitationObserver observer) {
