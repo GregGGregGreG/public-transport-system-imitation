@@ -110,11 +110,11 @@ public class StationObserver implements SystemImitationObserver, PassengerManage
         RouteDirection direction;
         BusRouteDecorator route;
         Passenger passenger;
-        BusStation stationFinal;
+        StationObserver stationFinal;
         for (int i = 0; i < count; i++) {
             route = getRandomRoute();
-            direction = RouteDirection.getRandom(route, station);
-            stationFinal = direction.toStation(route, station)
+            direction = RouteDirection.getRandom(route, this);
+            stationFinal = direction.toStation(route, this)
                     .stream()
                     .findFirst()
                     .get();

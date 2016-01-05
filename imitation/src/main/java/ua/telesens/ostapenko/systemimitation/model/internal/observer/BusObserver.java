@@ -18,7 +18,7 @@ public class BusObserver implements SystemImitationObserver {
 
     private final Bus bus;
     private final BusRouteDecorator route;
-    private Map<BusStation, Queue<Passenger>> passengers = Collections.emptyMap();
+    private Map<StationObserver, Queue<Passenger>> passengers = Collections.emptyMap();
     private Map<DayType, List<ScheduleLine>> schedules = Collections.emptyMap();
     private long transpotedPassenger;
     private int countPassenger;
@@ -92,7 +92,7 @@ public class BusObserver implements SystemImitationObserver {
     // Route register
 
     private void registerRoute() {
-        route.getStations()
+        route.getStationObservers()
                 .parallelStream()
                 .forEach(station -> passengers.put(station, new ArrayDeque<>()));
     }
@@ -117,7 +117,7 @@ public class BusObserver implements SystemImitationObserver {
     }
 
     private int uploadFrom(StationObserver stationObserver, int upload) {
-        Queue<Passenger> uploadPassenger = passengers.get(stationObserver.getStation());
+        Queue<Passenger> uploadPassenger = passengers.get(stationObserver);
 
         upload += uploadPassenger.size();
         countPassenger -= upload;

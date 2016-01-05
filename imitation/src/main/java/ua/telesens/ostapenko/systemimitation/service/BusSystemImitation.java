@@ -90,12 +90,16 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
     @Override
     public void notifyAllObservers() {
         ImitationEvent event = createEvent();
-        stations
-                .parallelStream()
-                .forEach(observer -> observer.updateEvent(event));
-        buses
-                .parallelStream()
-                .forEach(observer -> observer.updateEvent(event));
+        try {
+            stations
+                    .parallelStream()
+                    .forEach(observer -> observer.updateEvent(event));
+            buses
+                    .parallelStream()
+                    .forEach(observer -> observer.updateEvent(event));
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
     }
 
     private boolean hasNextStep() {

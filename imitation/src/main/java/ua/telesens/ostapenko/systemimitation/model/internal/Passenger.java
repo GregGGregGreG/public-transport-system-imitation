@@ -3,6 +3,7 @@ package ua.telesens.ostapenko.systemimitation.model.internal;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import ua.telesens.ostapenko.systemimitation.model.internal.observer.StationObserver;
 
 /**
  * @author root
@@ -13,6 +14,6 @@ import lombok.ToString;
 @ToString
 public class Passenger {
 
-    private final BusStation station;
+    private final StationObserver station;
 
 }
