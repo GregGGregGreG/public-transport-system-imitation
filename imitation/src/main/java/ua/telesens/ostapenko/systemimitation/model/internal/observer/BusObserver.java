@@ -39,12 +39,11 @@ public class BusObserver implements SystemImitationObserver {
         return schedules;
     }
 
-    public synchronized void setSchedules(DayType dayType, Collection<ScheduleLine> schedules) {
-        if (Objects.isNull(this.schedules.get(dayType))) {
-            this.schedules.put(dayType, new ArrayList<>());
-            this.schedules.get(dayType).addAll(schedules);
+    public synchronized void setSchedules(DayType dayType, Collection<ScheduleLine> scheduleLines) {
+        if (Objects.isNull(schedules.get(dayType))) {
+            schedules.put(dayType, new LinkedList<>(scheduleLines));
         } else {
-            this.schedules.get(dayType).addAll(schedules);
+            schedules.get(dayType).addAll(scheduleLines);
         }
     }
 
@@ -52,12 +51,14 @@ public class BusObserver implements SystemImitationObserver {
 
     @Override
     public synchronized void updateEvent(ImitationEvent event) {
-        schedules
-                .get(event.getDayType())
-                .stream()
-                .parallel()
-                .filter(scheduleLine -> event.getTime().toLocalTime().equals(scheduleLine.getTime()))
-                .forEach(scheduleLine -> updateEvent(scheduleLine, event));
+        if (schedules.containsKey(event.getDayType())) {
+            schedules
+                    .get(event.getDayType())
+                    .stream()
+                    .parallel()
+                    .filter(scheduleLine -> event.getTime().toLocalTime().equals(scheduleLine.getTime()))
+                    .forEach(scheduleLine -> updateEvent(scheduleLine, event));
+        }
     }
 
     private void updateEvent(ScheduleLine scheduleLine, ImitationEvent event) {
@@ -99,15 +100,15 @@ public class BusObserver implements SystemImitationObserver {
 
     // Operations from passenger
 
-    private int downloadFrom(StationObserver stationObserver, LocalDateTime time, RouteDirection direction, int download) {
+    private int downloadFrom(StationObserver station, LocalDateTime time, RouteDirection direction, int download) {
         Passenger passenger;//Download passengers
-        while (isNotFill() && stationObserver.hasNextPassenger(route, direction)) {
-            passenger = stationObserver.getPassenger(route, direction);
+        while (isNotFill() && station.hasNextPassenger(route, direction)) {
+            passenger = station.getPassenger(route, direction);
             passengers.get(passenger.getStation()).add(passenger);
 
             log.trace(time +
                     " |\t" + bus.getNumber() +
-                    " |\t" + stationObserver.getStation().getName() +
+                    " |\t" + station.getStation().getName() +
                     " |Add\t" + passenger);
             countPassenger++;
             download++;
@@ -116,9 +117,7 @@ public class BusObserver implements SystemImitationObserver {
     }
 
     private int uploadFrom(StationObserver stationObserver, int upload) {
-        Queue<Passenger> uploadPassenger;
-
-        uploadPassenger = passengers.get(stationObserver.getStation());
+        Queue<Passenger> uploadPassenger = passengers.get(stationObserver.getStation());
 
         upload += uploadPassenger.size();
         countPassenger -= upload;

@@ -1,5 +1,6 @@
 package ua.telesens.ostapenko.systemimitation.service;
 
+import com.google.common.collect.Iterables;
 import ua.telesens.ostapenko.systemimitation.model.internal.*;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.BusObserver;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.StationObserver;
@@ -17,6 +18,7 @@ import static ua.telesens.ostapenko.systemimitation.model.internal.RouteType.CYC
  * @since 03.01.16
  */
 public class ScheduleManager {
+    // FIXME: 05.01.16 FUKIN CODE
     // FIXME: 05.01.16 BADDDDDDDDDDDDDDDDDDDd
     // FIXME: 05.01.16 BADDDDDDDDDDDDDDDDDDDd
     // FIXME: 05.01.16 BADDDDDDDDDDDDDDDDDDDd
@@ -66,8 +68,8 @@ public class ScheduleManager {
                                     ? FINAL
                                     : INTERMEDIATE;
 
-
                             buff.add(ScheduleLine.of(time, bus, direction, station, routeStationType));
+
 
                             time = i2 == stationObservers.size() - 1
                                     //Pause between race
@@ -103,7 +105,8 @@ public class ScheduleManager {
     private RouteDirection directionTo(BusObserver bus, DayType dayType) {
         // FIXME: 04.01.16 Bad style
         return Objects.nonNull(bus.getSchedules().get(dayType))
-                ? switchDirect(new LinkedList<>(bus.getSchedules().get(dayType)).getLast().getDirection())
+//                ? switchDirect(new LinkedList<>(bus.getSchedules().get(dayType)).getLast().getDirection())
+                ? switchDirect(Iterables.getLast(bus.getSchedules().get(dayType)).getDirection())
                 : STRAIGHT;
     }
 

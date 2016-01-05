@@ -1,20 +1,17 @@
 package ua.telesens.ostapenko.systemimitation.service;
 
+import com.google.common.collect.Iterables;
 import ua.telesens.ostapenko.systemimitation.api.Report;
 import ua.telesens.ostapenko.systemimitation.api.SystemImitation;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObservable;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObserver;
-import ua.telesens.ostapenko.systemimitation.model.internal.BusRoute;
-import ua.telesens.ostapenko.systemimitation.model.internal.BusRouteDecorator;
-import ua.telesens.ostapenko.systemimitation.model.internal.DayType;
-import ua.telesens.ostapenko.systemimitation.model.internal.ImitationEvent;
+import ua.telesens.ostapenko.systemimitation.model.internal.*;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.BusObserver;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.StationObserver;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalTime;
+import java.util.*;
 
 /**
  * @author root
@@ -25,11 +22,12 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
     private static final ScheduleManager SCHEDULE_MANAGER = new ScheduleManager();
 
     private List<BusRouteDecorator> routes = Collections.emptyList();
-    private List<SystemImitationObserver> stations = Collections.emptyList();
-    private List<SystemImitationObserver> buses = Collections.emptyList();
+    private List<StationObserver> stations = Collections.emptyList();
+    private List<BusObserver> buses = Collections.emptyList();
     private LocalDateTime currentTime;
     private LocalDateTime starting;
     private LocalDateTime end;
+    private Map<DayType, LocalTime> endDay = Collections.emptyMap();
 
     public BusSystemImitation(List<BusRoute> routes, LocalDateTime starting, LocalDateTime end) {
         this.routes = new ArrayList<>();
@@ -38,7 +36,9 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         this.starting = starting;
         this.currentTime = starting;
         this.end = end;
+        this.endDay = new HashMap<>();
         initRoutes(routes);
+        initEndDay();
     }
 
     @Override
@@ -69,9 +69,9 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
     @Override
     public SystemImitationObserver register(SystemImitationObserver observer) {
         if (observer.getClass().equals(BusObserver.class)) {
-            return addObserver(buses, observer);
+            return addObserver(buses, (BusObserver) observer);
         } else if (observer.getClass().equals(StationObserver.class)) {
-            return addObserver(stations, observer);
+            return addObserver(stations, (StationObserver) observer);
         }
         throw new IllegalArgumentException();
     }
@@ -100,7 +100,25 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         routes.parallelStream().forEach(route -> this.routes.add(BusRouteDecorator.of(route, this, SCHEDULE_MANAGER)));
     }
 
-    private SystemImitationObserver addObserver(List<SystemImitationObserver> observers, SystemImitationObserver observer) {
+    private void initEndDay() {
+        stations.forEach(station -> station.getStation().getRules().forEach((this::addEndDay)));
+    }
+
+    private void addEndDay(DayType day, List<PassengerGenerationRule> rules) {
+        Optional<PassengerGenerationRule> rule = rules
+                .stream()
+                .max(PassengerGenerationRule::compareTo);
+
+        LocalTime time = Iterables.getLast(rule.get().getSchedule());
+
+        if (Objects.isNull(endDay.get(day))) {
+            endDay.put(day, time);
+        } else if (time.isAfter(endDay.get(day))) {
+            endDay.put(day, time);
+        }
+    }
+
+    private <T> T addObserver(List<T> observers, T observer) {
         if (observers.contains(observer)) {
             return observers.get(observers.indexOf(observer));
         }

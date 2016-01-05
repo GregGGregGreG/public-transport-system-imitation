@@ -76,7 +76,7 @@
             <version>0.15</version>
         </dependency>
 
-        <!--GuAVA TEST-->
+        <!--GuAVA -->
 
         <dependency>
             <groupId>com.google.guava</groupId>

@@ -16,7 +16,6 @@ import java.util.*;
 public class BusRouteDecorator implements RouteTransportPublic {
 
     private final BusRoute route;
-    private LocalTime ending;
     private Collection<BusStation> stations = Collections.emptyList();
     private Collection<BusObserver> busObservers = Collections.emptyList();
     private Collection<StationObserver> stationObservers = Collections.emptyList();
@@ -69,14 +68,6 @@ public class BusRouteDecorator implements RouteTransportPublic {
         return stations;
     }
 
-    public LocalTime getEnding() {
-        return ending;
-    }
-
-    public void setEnding(LocalTime ending) {
-        this.ending = ending;
-    }
-
     public Collection<BusObserver> getBusObservers() {
         return busObservers;
     }
@@ -103,9 +94,10 @@ public class BusRouteDecorator implements RouteTransportPublic {
 
     private void parceArcStation() {
         List<RouteArc> arcs = (List<RouteArc>) getArcList();
-        for (int i = 0; i < arcs.size(); i++) {
+        int size = arcs.size();
+        for (int i = 0; i < size; i++) {
             stations.add(arcs.get(i).getStart());
-            if (i == arcs.size() - 1) {
+            if (i == size - 1) {
                 stations.add(arcs.get(i).getEnd());
             }
         }

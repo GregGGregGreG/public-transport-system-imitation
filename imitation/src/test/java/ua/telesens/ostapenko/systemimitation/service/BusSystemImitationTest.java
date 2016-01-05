@@ -39,12 +39,12 @@ public class BusSystemImitationTest {
                 8, LocalTime.of(16, 0), LocalTime.of(19, 0), LocalTime.of(0, 15))
         );
         workDayRulesOfGagarina.add(PassengerGenerationRule.of(
-                4, LocalTime.of(19, 0), LocalTime.of(22, 0), LocalTime.of(0, 15))
+                4, LocalTime.of(19, 0), LocalTime.of(23, 0), LocalTime.of(0, 15))
         );
 
         List<PassengerGenerationRule> holidayRulesOfGagarina = new ArrayList<>();
         holidayRulesOfGagarina.add(PassengerGenerationRule.of(
-                4, LocalTime.of(6, 0), LocalTime.of(22, 0), LocalTime.of(0, 16))
+                4, LocalTime.of(6, 0), LocalTime.of(22, 17), LocalTime.of(0, 16))
         );
         Map<DayType, List<PassengerGenerationRule>> rulesGagarina = new HashMap<>();
         rulesGagarina.put(DayType.WORKDAY, workDayRulesOfGagarina);
@@ -147,7 +147,7 @@ public class BusSystemImitationTest {
 
         BusSystemImitation imitation = new BusSystemImitation(routes,
                 LocalDateTime.of(2015, Month.NOVEMBER, 12, 6, 0),
-                LocalDateTime.of(2015, Month.NOVEMBER, 12, 23, 0)
+                LocalDateTime.of(2015, Month.NOVEMBER, 15, 23, 0)
         );
         imitation.run();
 

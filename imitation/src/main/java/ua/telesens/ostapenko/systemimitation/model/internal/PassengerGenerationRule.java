@@ -1,5 +1,6 @@
 package ua.telesens.ostapenko.systemimitation.model.internal;
 
+import com.google.common.collect.Iterables;
 import lombok.ToString;
 
 import java.time.LocalTime;
@@ -10,7 +11,7 @@ import java.util.*;
  * @since 10.12.15
  */
 @ToString(exclude = "schedule")
-public class PassengerGenerationRule {
+public class PassengerGenerationRule implements Comparable<PassengerGenerationRule> {
 
     private final int limit;
     private final LocalTime starting;
@@ -60,5 +61,14 @@ public class PassengerGenerationRule {
         for (int i = starting; i <= end; i = i + interval) {
             schedule.add(LocalTime.ofSecondOfDay(i));
         }
+    }
+
+    public List<LocalTime> getSchedule() {
+        return schedule;
+    }
+
+    @Override
+    public int compareTo(PassengerGenerationRule o) {
+        return Iterables.getLast(schedule).compareTo(Iterables.getLast(o.getSchedule()));
     }
 }
