@@ -31,8 +31,8 @@ public class StationObserver implements SystemImitationObserver, PassengerManage
         registerRoute(route);
     }
 
-    public static StationObserver of(BusStation station, BusRouteDecorator route){
-        return new StationObserver(station,route);
+    public static StationObserver of(BusStation station, BusRouteDecorator route) {
+        return new StationObserver(station, route);
     }
 
     // FIXME: 17.12.15 Add my exception
@@ -85,8 +85,10 @@ public class StationObserver implements SystemImitationObserver, PassengerManage
                 });
     }
 
-    private void clean() {
+    public void clean() {
         passengers.forEach((route, quePassenger) -> quePassenger.forEach((direction, que) -> que.clear()));
+        countPassenger = 0;
+        log.debug(String.format("%-12s%-20s", station.getName(), "Remove All Passenger"));
     }
 
     @Override
