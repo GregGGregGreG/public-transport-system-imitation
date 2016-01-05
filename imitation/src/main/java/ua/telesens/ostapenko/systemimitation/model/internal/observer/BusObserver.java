@@ -1,24 +1,29 @@
 package ua.telesens.ostapenko.systemimitation.model.internal.observer;
 
+import lombok.extern.slf4j.Slf4j;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObserver;
 import ua.telesens.ostapenko.systemimitation.model.internal.*;
 
+import java.time.LocalTime;
 import java.util.*;
+
+import static ua.telesens.ostapenko.systemimitation.model.internal.RouteStationType.FINAL;
 
 /**
  * @author root
  * @since 14.12.15
  */
+@Slf4j
 public class BusObserver implements SystemImitationObserver {
 
-    private Bus bus;
-    private BusRouteDecorator route;
+    private final Bus bus;
+    private final BusRouteDecorator route;
     private Map<BusStation, Queue<Passenger>> passengers = Collections.emptyMap();
     private Map<DayType, List<ScheduleLine>> schedules = Collections.emptyMap();
     private long transpotedPassenger;
     private int countPassenger;
 
-    public BusObserver(Bus bus, BusRouteDecorator route) {
+    private BusObserver(Bus bus, BusRouteDecorator route) {
         this.bus = bus;
         this.route = route;
         this.passengers = new HashMap<>();
@@ -26,96 +31,64 @@ public class BusObserver implements SystemImitationObserver {
         registerRoute();
     }
 
-
-    @Override
-    public void updateEvent(ImitationEvent event) {
-//        List<ScheduleLine> buff = schedules.get(event.getDayType());
-
-
-//        // FIXME: 17.12.15  Add global event object
-//        Bus busSchedule;
-//        LocalTime timeSchedule;
-//        StationObserver stationObserver;
-//        Route routeSchedule;
-//        EnumDirection direction;
-//        Passenger passenger;
-//        Queue<Passenger> uploadPassenger;
-//
-//        for (ScheduleNode scheduleNode : schedule.get(route)) {
-//            busSchedule = scheduleNode.getBusObserver().getBus();
-//            timeSchedule = scheduleNode.getTime();
-//
-//            if (bus.equals(busSchedule) && timeSchedule.equals(time.toLocalTime())) {
-//                routeSchedule = scheduleNode.getRoute();
-//                direction = scheduleNode.getDirection();
-//                stationObserver = scheduleNode.getStationObserver();
-//
-//                // FIXME: 17.12.15 Bad style
-//                //Upload Passenger from final stationObserver
-//                if (scheduleNode.getStationState().equals(FINAL)) {
-//                    uploadAll();
-//                    log.trace("Upload all passenger!");
-//                } else {
-//                    //Upload from stationObserver
-//                    uploadPassenger = passengers.get(stationObserver.getStation());
-//                    log.debug(time.toLocalDate() +
-//                            " |\t" + timeSchedule +
-//                            " |\t" + busSchedule +
-//                            stationObserver.getStation() +
-//                            " |Upload \t" + uploadPassenger.size() + " passenger");
-//                    uploadPassenger.clear();
-//
-//                    //Download passengers
-//                    while (isNotFill() && stationObserver.hasNextPassenger(routeSchedule, direction)) {
-//                        passenger = stationObserver.getPassenger(routeSchedule, direction);
-//                        passengers.get(passenger.getFinalStation()).add(passenger);
-//
-//                        log.trace(time.toLocalDate() +
-//                                " |\t" + timeSchedule +
-//                                busSchedule +
-//                                " |\t" + stationObserver.getStation() +
-//                                " |Add\t" + passenger);
-//                    }
-//
-//                }
-//
-//                log.debug(time.toLocalDate() +
-//                        " |\t" + timeSchedule +
-//                        " |\t" + bus +
-//                        " |\t" + stationObserver.getStation() +
-//                        "\t" + scheduleNode.getStationState() +
-//                        " |\t" + routeSchedule +
-//                        " | Current count passenger \t" + getCurrentCountPassenger());
-//            }
-//        }
+    public static BusObserver of(Bus bus, BusRouteDecorator route) {
+        return new BusObserver(bus, route);
     }
-
-//    public Map<DayType, List<ScheduleLine>> getSchedules() {
-//        return schedules;
-//    }
-//
-//    public void setSchedules(Map<DayType, List<ScheduleLine>> schedules) {
-//        this.schedules = schedules;
-//    }
-//
-//    public long getTranspotedPassenger() {
-//        return transpotedPassenger;
-//    }
-
 
     public Map<DayType, List<ScheduleLine>> getSchedules() {
         return schedules;
     }
 
-    // FIXME: 03.01.16 Stupid solve
-    public void setSchedules(DayType dayType, List<ScheduleLine> schedules) {
+    public synchronized void setSchedules(DayType dayType, Collection<ScheduleLine> schedules) {
         if (Objects.isNull(this.schedules.get(dayType))) {
-            this.schedules.put(dayType, new ArrayList<ScheduleLine>());
+            this.schedules.put(dayType, new ArrayList<>());
             this.schedules.get(dayType).addAll(schedules);
-        }else {
+        } else {
             this.schedules.get(dayType).addAll(schedules);
         }
     }
+
+    //Update event
+
+    @Override
+    public synchronized void updateEvent(ImitationEvent event) {
+        schedules
+                .get(event.getDayType())
+                .stream()
+                .parallel()
+                .filter(scheduleLine -> event.getTime().toLocalTime().equals(scheduleLine.getTime()))
+                .forEach(this::updateEvent);
+    }
+
+    private void updateEvent(ScheduleLine scheduleLine) {
+        StationObserver stationObserver = scheduleLine.getStationObserver();
+        LocalTime time = scheduleLine.getTime();
+        RouteDirection direction = scheduleLine.getDirection();
+        RouteStationType routeStationType = scheduleLine.getRouteStationType();
+        int download = 0;
+        int upload = 0;
+
+        //Upload Passenger from final stationObserver
+        if (routeStationType.equals(FINAL)) {
+            upload = uploadAll(upload);
+        } else {
+            upload = uploadFrom(stationObserver, upload);
+            download = downloadFrom(stationObserver, time, direction, download);
+        }
+
+        log.debug(String.format("%-6s|%-6s|%-12s|%-12s|%-10s|%-10s|%-12s|%-15s",
+                time,
+                bus.getNumber(),
+                stationObserver.getStation().getName(),
+                routeStationType,
+                route,
+                "Upload " + upload,
+                "Download " + download,
+                "Current count passenger\t" + countPassenger));
+    }
+
+
+    // Route register
 
     private void registerRoute() {
         route.getStations()
@@ -123,17 +96,50 @@ public class BusObserver implements SystemImitationObserver {
                 .forEach(station -> passengers.put(station, new ArrayDeque<>()));
     }
 
-    private void uploadAll() {
-        passengers.forEach((station, que) -> que.clear());
+
+    // Operations from passenger
+
+    private int downloadFrom(StationObserver stationObserver, LocalTime time, RouteDirection direction, int download) {
+        Passenger passenger;//Download passengers
+        while (isNotFill() && stationObserver.hasNextPassenger(route, direction)) {
+            passenger = stationObserver.getPassenger(route, direction);
+            passengers.get(passenger.getStation()).add(passenger);
+
+            log.trace(time +
+                    " |\t" + bus.getNumber() +
+                    " |\t" + stationObserver.getStation().getName() +
+                    " |Add\t" + passenger);
+            countPassenger++;
+            download++;
+        }
+        return download;
     }
 
-    private int getCountPassenger() {
-        return countPassenger;
+    private int uploadFrom(StationObserver stationObserver, int upload) {
+        Queue<Passenger> uploadPassenger;
+
+        uploadPassenger = passengers.get(stationObserver.getStation());
+
+        upload += uploadPassenger.size();
+        countPassenger -= upload;
+
+        uploadPassenger.clear();
+        return upload;
+    }
+
+    private int uploadAll(int upload) {
+        passengers.forEach((station, que) -> que.clear());
+        upload += countPassenger;
+        countPassenger = 0;
+        return upload;
     }
 
     private boolean isNotFill() {
-        return getCountPassenger() < bus.getCountPassenger();
+        return countPassenger < bus.getCountPassenger();
     }
+
+
+    //  String conversion
 
     @Override
     public String toString() {

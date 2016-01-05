@@ -1,6 +1,5 @@
 package ua.telesens.ostapenko.systemimitation.model.internal;
 
-import lombok.ToString;
 import ua.telesens.ostapenko.systemimitation.api.decorator.RouteTransportPublic;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObservable;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.BusObserver;
@@ -9,13 +8,11 @@ import ua.telesens.ostapenko.systemimitation.service.ScheduleManager;
 
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.IntStream;
 
 /**
  * @author root
  * @since 29.12.15
  */
-@ToString(exclude = {"stationObservers","busObservers"})
 public class BusRouteDecorator implements RouteTransportPublic {
 
     private final BusRoute route;
@@ -96,30 +93,26 @@ public class BusRouteDecorator implements RouteTransportPublic {
         this.stationObservers = stationObservers;
     }
 
-    //Use from generation schedule
+    //Use from generation schedule and from defend duplicate station and bus
     public void linkTo(SystemImitationObservable observable) {
         getStations().
-                parallelStream().
-                forEach(station -> stationObservers.add((StationObserver) observable.register(new StationObserver(station, this))));
-
-        route
-                .getBuses()
-                .parallelStream()
-                .forEach(bus -> busObservers.add((BusObserver) observable.register(new BusObserver(bus, this))));
+                forEach(station -> stationObservers.add((StationObserver) observable.register(StationObserver.of(station, this))));
+        route.getBuses()
+                .forEach(bus -> busObservers.add((BusObserver) observable.register(BusObserver.of(bus, this))));
     }
 
     private void parceArcStation() {
-        List<RouteArc> arcs = (List<RouteArc>) route.getArcList();
-        IntStream
-                .range(0, arcs.size())
-                .parallel()
-                .forEach(value -> initStation(arcs, value));
+        List<RouteArc> arcs = (List<RouteArc>) getArcList();
+        for (int i = 0; i < arcs.size(); i++) {
+            stations.add(arcs.get(i).getStart());
+            if (i == arcs.size() - 1) {
+                stations.add(arcs.get(i).getEnd());
+            }
+        }
     }
 
-    private void initStation(List<RouteArc> arcs, int value) {
-        stations.add(arcs.get(value).getStart());
-        if (value == arcs.size() - 1) {
-            stations.add(arcs.get(value).getEnd());
-        }
+    @Override
+    public String toString() {
+        return "route=" + route.getName();
     }
 }

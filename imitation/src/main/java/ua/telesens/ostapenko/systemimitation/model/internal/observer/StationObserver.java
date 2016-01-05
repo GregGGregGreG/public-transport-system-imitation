@@ -1,31 +1,38 @@
 package ua.telesens.ostapenko.systemimitation.model.internal.observer;
 
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import ua.telesens.ostapenko.systemimitation.api.PassengerManager;
 import ua.telesens.ostapenko.systemimitation.api.RouteManager;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObserver;
 import ua.telesens.ostapenko.systemimitation.model.internal.*;
 
+import java.time.LocalTime;
 import java.util.*;
 
 /**
  * @author root
  * @since 14.12.15
  */
+@Slf4j
 @EqualsAndHashCode(exclude = {"passengers", "routes", "countPassenger"})
 public class StationObserver implements SystemImitationObserver, PassengerManager, RouteManager {
 
-    private BusStation station;
+    private final BusStation station;
     private Map<BusRouteDecorator, Map<RouteDirection, Queue<Passenger>>> passengers = Collections.emptyMap();
     //Use from optimize process generation passenger
-    private List<BusRouteDecorator> routes = Collections.emptyList();
+    private Collection<BusRouteDecorator> routes = Collections.emptyList();
     private long countPassenger;
 
-    public StationObserver(BusStation station, BusRouteDecorator route) {
+    private StationObserver(BusStation station, BusRouteDecorator route) {
         this.station = station;
         this.routes = new ArrayList<>();
         this.passengers = new HashMap<>();
         registerRoute(route);
+    }
+
+    public static StationObserver of(BusStation station, BusRouteDecorator route){
+        return new StationObserver(station,route);
     }
 
     // FIXME: 17.12.15 Add my exception
@@ -60,37 +67,34 @@ public class StationObserver implements SystemImitationObserver, PassengerManage
 
     @Override
     public void updateEvent(ImitationEvent event) {
-//        isMovement(time);
-//        stationRules.stream()
-//                .filter(stationRule -> stationRule.is(time.toLocalTime()))
-//                .forEach(stationRule -> {
-//                    int count = stationRule.execute(time);
-//                    genPassengers(count);
-//                    log.debug(time.toLocalDate() + " |\t" + time.toLocalTime() + " |\t" + station +
-//                            " |Gen passenger \t" + count + " |Current count passenger \t" + (getCountPassenger())
-//                    );
-//                });
+        List<PassengerGenerationRule> rules = station.getRules().get(event.getDayType());
+        LocalTime time = event.getTime().toLocalTime();
+        rules.stream()
+                .filter(rule -> rule.is(time))
+                .forEach(rule -> {
+                    int count = rule.execute(time);
+                    genPassengers(count);
+
+                    log.debug(String.format("%-6s|%-12s|%-12s|%-20s",
+                            event.getTime().toLocalTime(),
+                            station.getName(),
+                            "Generate " + count,
+                            "Current count passenger " + getCountPassenger()
+
+                    ));
+                });
     }
 
-    // FIXME: 17.12.15 BAD code
-//    private void isMovement(LocalDateTime time) {
-//        routes.stream().filter(route -> route.getEnding().equals(time.toLocalTime())).
-//                forEach(route -> {
-//                    RouteType routeType = route.getType();
-//                    if (routeType.equals(RouteType.LINE)) {
-//                        for (EnumDirection direction : EnumDirection.values()) {
-//                            passengers.get(route).get(direction).clear();
-//                        }
-//                    } else if (routeType.equals(RouteType.CYCLE)) {
-//                        passengers.get(route).get(EnumDirection.STRAIGHT).clear();
-//                    }
-//                });
-//    }
+    private void clean() {
+        passengers.forEach((route, quePassenger) -> quePassenger.forEach((direction, que) -> que.clear()));
+    }
+
     @Override
     public void registerRoute(BusRouteDecorator route) {
         if (routes.contains(route)) {
             return;
         }
+        //Use from optimize generation passenger
         routes.add(route);
         passengers.put(route, route.getType().getQue());
     }
@@ -115,7 +119,7 @@ public class StationObserver implements SystemImitationObserver, PassengerManage
             passenger = Passenger.of(stationFinal);
 
             addPassenger(route, direction, passenger);
-//            log.debug(station + "Gen new passenger\t" + direction + "\t" + passenger);
+            log.trace(station + "Gen new passenger\t" + direction + "\t" + passenger);
         }
     }
 
@@ -126,7 +130,6 @@ public class StationObserver implements SystemImitationObserver, PassengerManage
         return buff.stream().findFirst().get();
     }
 
-    // FIXME: 18.12.15 Validate from type route
     private long getCountPassenger() {
         return countPassenger;
     }

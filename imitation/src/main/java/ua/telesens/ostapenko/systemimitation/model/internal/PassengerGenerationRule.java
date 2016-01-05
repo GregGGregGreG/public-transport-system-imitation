@@ -2,7 +2,6 @@ package ua.telesens.ostapenko.systemimitation.model.internal;
 
 import lombok.ToString;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -13,10 +12,10 @@ import java.util.*;
 @ToString(exclude = "schedule")
 public class PassengerGenerationRule {
 
-    private int limit;
-    private LocalTime starting;
-    private LocalTime end;
-    private LocalTime interval;
+    private final int limit;
+    private final LocalTime starting;
+    private final LocalTime end;
+    private final LocalTime interval;
     private List<LocalTime> schedule = Collections.emptyList();
 
     private PassengerGenerationRule(int limit, LocalTime starting, LocalTime end, LocalTime interval) {
@@ -45,8 +44,8 @@ public class PassengerGenerationRule {
         return false;
     }
 
-    public int execute(LocalDateTime time) {
-        if (!is(time.toLocalTime())) {
+    public int execute(LocalTime time) {
+        if (!is(time)) {
             throw new IllegalStateException();
         }
         return new Random().nextInt(limit);

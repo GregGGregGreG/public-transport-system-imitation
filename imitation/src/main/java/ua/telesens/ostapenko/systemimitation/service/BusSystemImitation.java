@@ -37,21 +37,16 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         this.buses = new ArrayList<>();
         this.starting = starting;
         this.currentTime = starting;
-//        this.end = end;
-        initRoutes(routes);
-
         this.end = end;
+        initRoutes(routes);
     }
 
     @Override
     public Report run() {
-//        schedule = Schedule.of(routes).execute();
-
         while (currentTime.isBefore(end)) {
             notifyAllObservers();
             currentTime = currentTime.plusMinutes(1);
         }
-
         return new Report() {
         };
     }
@@ -86,7 +81,6 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         throw new UnsupportedOperationException();
     }
 
-    // FIXME: 30.12.15 Remove bad object create
     @Override
     public void notifyAllObservers() {
         ImitationEvent event = createEvent();
@@ -99,7 +93,7 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
     }
 
     private ImitationEvent createEvent() {
-        return ImitationEvent.of(currentTime.toLocalTime(), DayType.to(currentTime.getDayOfWeek()));
+        return ImitationEvent.of(currentTime, DayType.to(currentTime.getDayOfWeek()));
     }
 
     private void initRoutes(List<BusRoute> routes) {

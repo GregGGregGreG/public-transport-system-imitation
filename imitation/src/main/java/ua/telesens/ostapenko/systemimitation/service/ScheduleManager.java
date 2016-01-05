@@ -9,8 +9,7 @@ import java.util.*;
 
 import static ua.telesens.ostapenko.systemimitation.model.internal.RouteDirection.BACK;
 import static ua.telesens.ostapenko.systemimitation.model.internal.RouteDirection.STRAIGHT;
-import static ua.telesens.ostapenko.systemimitation.model.internal.RouteStationType.FINAL;
-import static ua.telesens.ostapenko.systemimitation.model.internal.RouteStationType.INTERMEDIATE;
+import static ua.telesens.ostapenko.systemimitation.model.internal.RouteStationType.*;
 import static ua.telesens.ostapenko.systemimitation.model.internal.RouteType.CYCLE;
 
 /**
@@ -18,8 +17,11 @@ import static ua.telesens.ostapenko.systemimitation.model.internal.RouteType.CYC
  * @since 03.01.16
  */
 public class ScheduleManager {
-
-    // FIXME: 04.01.16 Bad algorithm
+    // FIXME: 05.01.16 BADDDDDDDDDDDDDDDDDDDd
+    // FIXME: 05.01.16 BADDDDDDDDDDDDDDDDDDDd
+    // FIXME: 05.01.16 BADDDDDDDDDDDDDDDDDDDd
+    // FIXME: 05.01.16 BADDDDDDDDDDDDDDDDDDDd
+    // FIXME: 04.01.16 Bad algorithm!!!!!!!!!!!!!!!
     public void createSchedule(BusRouteDecorator route) {
         LocalTime starting;
         LocalTime time;
@@ -27,7 +29,7 @@ public class ScheduleManager {
         RouteDirection direction;
         RouteStationType routeStationType;
         List<ScheduleLine> buff;
-        List<StationObserver> stationObservers = (List<StationObserver>) route.getStationObservers();
+        List<StationObserver> stationObservers;
         List<RouteArc> arcs = (List<RouteArc>) route.getArcList();
         List<BusObserver> busObservers = (List<BusObserver>) route.getBusObservers();
 
@@ -48,6 +50,8 @@ public class ScheduleManager {
 
             for (RouteTrafficRule rule : rules) {
                 for (int i = 0; i < rule.getCountBus(); i++) {
+                    //Get station line
+                    stationObservers = new ArrayList<>(route.getStationObservers());
                     //Get bus
                     bus = busObservers.get(i);
                     //Get last position bus in route
@@ -58,9 +62,10 @@ public class ScheduleManager {
                             //Get station
                             station = stationObservers.get(i2);
 
-                            routeStationType = i2 == stationObservers.size() - 1
+                            routeStationType = i2 == 0 ? INITIAL : i2 == stationObservers.size() - 1
                                     ? FINAL
                                     : INTERMEDIATE;
+
 
                             buff.add(ScheduleLine.of(time, bus, direction, station, routeStationType));
 
@@ -105,7 +110,5 @@ public class ScheduleManager {
     private RouteDirection switchDirect(RouteDirection direction) {
         return direction.equals(BACK) ? STRAIGHT : BACK;
     }
-
-
 }
 

@@ -1,5 +1,6 @@
 package ua.telesens.ostapenko.systemimitation.model.internal;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -12,33 +13,31 @@ public enum RouteDirection {
 
     STRAIGHT {
         @Override
-        public List<BusStation> toStation(BusRouteDecorator busRoute, BusStation busStation) {
-//            List<Station> stations = RouteManager.getAllStation(route);
-//            int position = stations.indexOf(station);
-//
-//            List<Station> result = new ArrayList<>();
-//            for (int i = position + 1; i < stations.size(); i++) {
-//                result.add(stations.get(i));
-//            }
-//            return result;
-            return null;
+        public List<BusStation> toStation(BusRouteDecorator route, BusStation station) {
+            List<BusStation> stations = (List<BusStation>) route.getStations();
+            int position = stations.indexOf(station);
+
+            List<BusStation> result = new ArrayList<>();
+            for (int i = position + 1; i < stations.size(); i++) {
+                result.add(stations.get(i));
+            }
+            return result;
         }
     }, BACK {
         @Override
-        public List<BusStation> toStation(BusRouteDecorator busRoute, BusStation busStation) {
-//            List<Station> stations = RouteManager.getAllStation(route);
-//            List<Station> result = new ArrayList<>();
-//            int position = stations.indexOf(station);
-//
-//            for (int i = position - 1; i >= 0; i--) {
-//                result.add(stations.get(i));
-//            }
-//            return result;
-            return null;
+        public List<BusStation> toStation(BusRouteDecorator route, BusStation station) {
+            List<BusStation> stations = (List<BusStation>) route.getStations();
+            int position = stations.indexOf(station);
+
+            List<BusStation> result = new ArrayList<>();
+            for (int i = position - 1; i >= 0; i--) {
+                result.add(stations.get(i));
+            }
+            return result;
         }
     };
 
-    public abstract List<BusStation> toStation(BusRouteDecorator busRoute, BusStation position);
+    public abstract List<BusStation> toStation(BusRouteDecorator route, BusStation station);
 
     public static RouteDirection getRandom() {
         List<RouteDirection> letters = Arrays.asList(RouteDirection.values());
@@ -46,15 +45,16 @@ public enum RouteDirection {
         return letters.stream().findFirst().get();
     }
 
-    public static RouteDirection getRandom(BusRouteDecorator busRoute, BusStation busStation) {
-        List<BusStation> stations = (List<BusStation>) busRoute.getStations();
-        RouteDirection result = getRandom();
-        if (stations.indexOf(busStation) == 0) {
-            result = RouteDirection.STRAIGHT;
-        } else if (stations.indexOf(busStation) == (stations.size() - 1)) {
-            result = RouteDirection.BACK;
+    public static RouteDirection getRandom(BusRouteDecorator route, BusStation station) {
+        List<BusStation> stations = (List<BusStation>) route.getStations();
+        if (stations.indexOf(station) == 0) {
+            //From initialize station
+            return RouteDirection.STRAIGHT;
+        } else if (stations.indexOf(station) == (stations.size() - 1)) {
+            //From final station
+            return RouteDirection.BACK;
         }
-        return result;
+        return getRandom();
     }
 
 }

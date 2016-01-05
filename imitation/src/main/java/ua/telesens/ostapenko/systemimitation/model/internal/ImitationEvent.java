@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 /**
  * @author root
@@ -15,6 +15,6 @@ import java.time.LocalTime;
 @ToString
 public class ImitationEvent {
 
-    private final LocalTime time;
+    private final LocalDateTime time;
     private final DayType dayType;
 }

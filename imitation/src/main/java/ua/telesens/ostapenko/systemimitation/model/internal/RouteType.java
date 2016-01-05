@@ -26,7 +26,6 @@ public enum RouteType {
                 que.put(direction, new ArrayDeque<>());
             }
             return que;
-
         }
     };
 

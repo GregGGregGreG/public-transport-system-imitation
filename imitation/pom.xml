@@ -69,6 +69,12 @@
             <version>${org.postgresql-version}</version>
         </dependency>
 
+        <!--//COLOR LOG4J-->
+        <dependency>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-log</artifactId>
+            <version>0.15</version>
+        </dependency>
 
         <!--GuAVA TEST-->
 

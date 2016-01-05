@@ -149,6 +149,7 @@ public class BusSystemImitationTest {
                 LocalDateTime.of(2015, Month.NOVEMBER, 12, 6, 0),
                 LocalDateTime.of(2015, Month.NOVEMBER, 12, 23, 0)
         );
+        imitation.run();
 
     }
 }
