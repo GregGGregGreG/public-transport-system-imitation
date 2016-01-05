@@ -76,7 +76,7 @@ public class StationObserver implements SystemImitationObserver, PassengerManage
                     genPassengers(count);
 
                     log.debug(String.format("%-6s|%-12s|%-12s|%-20s",
-                            event.getTime().toLocalTime(),
+                            event.getTime(),
                             station.getName(),
                             "Generate " + count,
                             "Current count passenger " + getCountPassenger()

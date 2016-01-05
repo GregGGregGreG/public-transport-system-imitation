@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObserver;
 import ua.telesens.ostapenko.systemimitation.model.internal.*;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static ua.telesens.ostapenko.systemimitation.model.internal.RouteStationType.FINAL;
@@ -57,12 +57,12 @@ public class BusObserver implements SystemImitationObserver {
                 .stream()
                 .parallel()
                 .filter(scheduleLine -> event.getTime().toLocalTime().equals(scheduleLine.getTime()))
-                .forEach(this::updateEvent);
+                .forEach(scheduleLine -> updateEvent(scheduleLine, event));
     }
 
-    private void updateEvent(ScheduleLine scheduleLine) {
+    private void updateEvent(ScheduleLine scheduleLine, ImitationEvent event) {
         StationObserver stationObserver = scheduleLine.getStationObserver();
-        LocalTime time = scheduleLine.getTime();
+        LocalDateTime time = event.getTime();
         RouteDirection direction = scheduleLine.getDirection();
         RouteStationType routeStationType = scheduleLine.getRouteStationType();
         int download = 0;
@@ -99,7 +99,7 @@ public class BusObserver implements SystemImitationObserver {
 
     // Operations from passenger
 
-    private int downloadFrom(StationObserver stationObserver, LocalTime time, RouteDirection direction, int download) {
+    private int downloadFrom(StationObserver stationObserver, LocalDateTime time, RouteDirection direction, int download) {
         Passenger passenger;//Download passengers
         while (isNotFill() && stationObserver.hasNextPassenger(route, direction)) {
             passenger = stationObserver.getPassenger(route, direction);
