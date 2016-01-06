@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import ua.telesens.ostapenko.systemimitation.api.decorator.TransportPublic;
 
 import java.util.UUID;
 
@@ -14,12 +13,12 @@ import java.util.UUID;
  */
 @Getter
 @RequiredArgsConstructor(staticName = "of")
-@ToString(exclude = {"uuid","countPassenger"})
+@ToString(exclude = {"uuid","capacity"})
 @EqualsAndHashCode
-public class Bus implements TransportPublic {
+public class Bus  {
 
     private UUID uuid = UUID.randomUUID();
     private final int number;
-    private final int countPassenger;
+    private final int capacity;
 
 }

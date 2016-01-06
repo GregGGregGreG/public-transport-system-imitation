@@ -1,29 +1,33 @@
 package ua.telesens.ostapenko.systemimitation.model.internal.observer;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import ua.telesens.ostapenko.systemimitation.api.BusStatistic;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObserver;
 import ua.telesens.ostapenko.systemimitation.model.internal.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static ua.telesens.ostapenko.systemimitation.model.internal.RouteStationType.FINAL;
+import static ua.telesens.ostapenko.systemimitation.model.internal.StationType.FINAL;
 
 /**
  * @author root
  * @since 14.12.15
  */
 @Slf4j
-public class BusObserver implements SystemImitationObserver {
+public class BusObserver implements SystemImitationObserver, BusStatistic {
 
+    @Getter
     private final Bus bus;
-    private final BusRouteDecorator route;
+    private final RouteDecorator route;
     private Map<StationObserver, Queue<Passenger>> passengers = Collections.emptyMap();
     private Map<DayType, List<ScheduleLine>> schedules = Collections.emptyMap();
-    private long transpotedPassenger;
-    private int countPassenger;
+    private int transportedPassenger;
+    private int numberTrips;
+    private int currentCountPassengers;
 
-    private BusObserver(Bus bus, BusRouteDecorator route) {
+    private BusObserver(Bus bus, RouteDecorator route) {
         this.bus = bus;
         this.route = route;
         this.passengers = new HashMap<>();
@@ -31,7 +35,7 @@ public class BusObserver implements SystemImitationObserver {
         registerRoute();
     }
 
-    public static BusObserver of(Bus bus, BusRouteDecorator route) {
+    public static BusObserver of(Bus bus, RouteDecorator route) {
         return new BusObserver(bus, route);
     }
 
@@ -65,13 +69,15 @@ public class BusObserver implements SystemImitationObserver {
         StationObserver stationObserver = scheduleLine.getStationObserver();
         LocalDateTime time = event.getTime();
         RouteDirection direction = scheduleLine.getDirection();
-        RouteStationType routeStationType = scheduleLine.getRouteStationType();
+        StationType stationType = scheduleLine.getStationType();
         int download = 0;
         int upload = 0;
 
         //Upload Passenger from final stationObserver
-        if (routeStationType.equals(FINAL)) {
+        if (stationType.equals(FINAL)) {
             upload = uploadAll(upload);
+            //Increment count done race
+            numberTrips++;
         } else {
             upload = uploadFrom(stationObserver, upload);
             download = downloadFrom(stationObserver, time, direction, download);
@@ -81,11 +87,11 @@ public class BusObserver implements SystemImitationObserver {
                 time,
                 bus.getNumber(),
                 stationObserver.getStation().getName(),
-                routeStationType,
+                stationType,
                 route,
                 "Upload " + upload,
                 "Download " + download,
-                "Current count passenger\t" + countPassenger));
+                "Current count passenger\t" + currentCountPassengers));
     }
 
 
@@ -106,12 +112,14 @@ public class BusObserver implements SystemImitationObserver {
             passenger = station.getPassenger(route, direction);
             passengers.get(passenger.getStation()).add(passenger);
 
+            download++;
+            currentCountPassengers++;
+            transportedPassenger++;
+
             log.trace(time +
                     " |\t" + bus.getNumber() +
                     " |\t" + station.getStation().getName() +
                     " |Add\t" + passenger);
-            countPassenger++;
-            download++;
         }
         return download;
     }
@@ -120,7 +128,7 @@ public class BusObserver implements SystemImitationObserver {
         Queue<Passenger> uploadPassenger = passengers.get(stationObserver);
 
         upload += uploadPassenger.size();
-        countPassenger -= upload;
+        currentCountPassengers -= upload;
 
         uploadPassenger.clear();
         return upload;
@@ -128,13 +136,26 @@ public class BusObserver implements SystemImitationObserver {
 
     private int uploadAll(int upload) {
         passengers.forEach((station, que) -> que.clear());
-        upload += countPassenger;
-        countPassenger = 0;
+        upload += currentCountPassengers;
+        currentCountPassengers = 0;
         return upload;
     }
 
     private boolean isNotFill() {
-        return countPassenger < bus.getCountPassenger();
+        return currentCountPassengers < bus.getCapacity();
+    }
+
+
+    // Statistic operation
+
+    @Override
+    public int getPassengers() {
+        return transportedPassenger;
+    }
+
+    @Override
+    public int getNumberTrips() {
+        return numberTrips;
     }
 
 

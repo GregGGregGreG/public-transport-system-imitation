@@ -9,8 +9,4 @@ import ua.telesens.ostapenko.systemimitation.model.internal.ImitationEvent;
 public interface SystemImitationObserver {
 
     void updateEvent(ImitationEvent event);
-
-    default void setObservable(SystemImitationObservable observable) {
-        observable.register(this);
-    }
 }

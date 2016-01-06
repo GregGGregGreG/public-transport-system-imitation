@@ -1,8 +1,8 @@
 package ua.telesens.ostapenko.systemimitation.service;
 
 import com.google.common.collect.Iterables;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import ua.telesens.ostapenko.systemimitation.api.Report;
 import ua.telesens.ostapenko.systemimitation.api.SystemImitation;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObservable;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObserver;
@@ -10,6 +10,7 @@ import ua.telesens.ostapenko.systemimitation.model.internal.*;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.BusObserver;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.StationObserver;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
@@ -19,12 +20,12 @@ import java.util.*;
  * @since 10.12.15
  */
 @Slf4j
+@Getter
 public class BusSystemImitation implements SystemImitation, SystemImitationObservable {
 
     private static final ScheduleManager SCHEDULE_MANAGER = new ScheduleManager();
     private static final int IMITATION_STEP = 1;
-
-    private List<BusRouteDecorator> routes = Collections.emptyList();
+    private List<RouteDecorator> routes = Collections.emptyList();
     private List<StationObserver> stations = Collections.emptyList();
     private List<BusObserver> buses = Collections.emptyList();
     private LocalDateTime imitationTime;
@@ -33,7 +34,7 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
     private Map<DayType, LocalTime> endDay = Collections.emptyMap();
     private Map<DayType, LocalTime> startDay = Collections.emptyMap();
 
-    public BusSystemImitation(List<BusRoute> routes, LocalDateTime starting, LocalDateTime end) {
+    public BusSystemImitation(List<Route> routes, LocalDateTime starting, LocalDateTime end) {
         this.routes = new ArrayList<>();
         this.stations = new ArrayList<>();
         this.buses = new ArrayList<>();
@@ -45,16 +46,15 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         initRoutes(routes);
         initEndDay();
         initStartDay();
+        log.debug(String.format("%-20s%-18s%-18s%-9s", "Period imitation", starting, end, Duration.between(starting, end)));
     }
 
     @Override
-    public Report run() {
+    public void run() {
         while (hasNextStep()) {
             notifyAllObservers();
             nextStep();
         }
-        return new Report() {
-        };
     }
 
     @Override
@@ -89,17 +89,18 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
 
     @Override
     public void notifyAllObservers() {
-        ImitationEvent event = createEvent();
-        try {
-            stations
-                    .parallelStream()
-                    .forEach(observer -> observer.updateEvent(event));
-            buses
-                    .parallelStream()
-                    .forEach(observer -> observer.updateEvent(event));
-        }catch (NullPointerException e){
-            e.printStackTrace();
-        }
+       try {
+           ImitationEvent event = createEvent();
+           stations
+                   .parallelStream()
+                   .forEach(observer -> observer.updateEvent(event));
+           buses
+                   .parallelStream()
+                   .forEach(observer -> observer.updateEvent(event));
+       }catch (NullPointerException e ){
+           e.printStackTrace();
+       }
+
     }
 
     private boolean hasNextStep() {
@@ -112,7 +113,7 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         if (endDay.get(dayType).equals(time)) {
             imitationTime = LocalDateTime.of(imitationTime.toLocalDate().plusDays(1), startDay.get(dayType));
             if (hasNextStep()) {
-                log.info("----->>>NEW DAY IN SYSTEM\t" + imitationTime);
+                log.debug("----->>>NEW DAY IN SYSTEM\t" + imitationTime);
                 stations.forEach(StationObserver::clean);
             }
         } else {
@@ -124,8 +125,14 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         return ImitationEvent.of(imitationTime, DayType.to(imitationTime.getDayOfWeek()));
     }
 
-    private void initRoutes(List<BusRoute> routes) {
-        routes.parallelStream().forEach(route -> this.routes.add(BusRouteDecorator.of(route, this, SCHEDULE_MANAGER)));
+    private void initRoutes(List<Route> routes) {
+        routes.parallelStream().forEach(route -> this.routes.add(RouteDecorator.of(route, this, SCHEDULE_MANAGER)));
+        log.debug(String.format("%-9s%-3d%-12s", "Register", routes.size(), "Route"));
+        routes.forEach(busRoute -> log.debug(String.valueOf(busRoute)));
+        log.debug(String.format("%-9s%-3d%-12s", "Register", buses.size(), "Bus"));
+        buses.forEach(busObserver -> log.debug(String.valueOf(busObserver)));
+        log.debug(String.format("%-9s%-3d%-12s", "Register", stations.size(), "Station"));
+        stations.forEach(stationObserver -> log.debug(String.valueOf(stationObserver)));
     }
 
     private void initStartDay() {

@@ -21,6 +21,6 @@ public class ScheduleLine {
     private final BusObserver busObserver;
     private final RouteDirection direction;
     private final StationObserver stationObserver;
-    private final RouteStationType routeStationType;
+    private final StationType stationType;
 
 }

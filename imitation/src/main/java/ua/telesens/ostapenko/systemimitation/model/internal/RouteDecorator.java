@@ -13,14 +13,14 @@ import java.util.*;
  * @author root
  * @since 29.12.15
  */
-public class BusRouteDecorator implements RouteTransportPublic {
+public class RouteDecorator implements RouteTransportPublic {
 
-    private final BusRoute route;
-    private Collection<BusStation> stations = Collections.emptyList();
+    private final Route route;
+    private Collection<Station> stations = Collections.emptyList();
     private Collection<BusObserver> busObservers = Collections.emptyList();
     private Collection<StationObserver> stationObservers = Collections.emptyList();
 
-    private BusRouteDecorator(BusRoute route, SystemImitationObservable observable, ScheduleManager scheduleManager) {
+    private RouteDecorator(Route route, SystemImitationObservable observable, ScheduleManager scheduleManager) {
         this.route = route;
         this.stations = new ArrayList<>();
         this.busObservers = new ArrayList<>();
@@ -30,8 +30,8 @@ public class BusRouteDecorator implements RouteTransportPublic {
         scheduleManager.createSchedule(this);
     }
 
-    public static BusRouteDecorator of(BusRoute route, SystemImitationObservable observable, ScheduleManager scheduleManager) {
-        return new BusRouteDecorator(route, observable, scheduleManager);
+    public static RouteDecorator of(Route route, SystemImitationObservable observable, ScheduleManager scheduleManager) {
+        return new RouteDecorator(route, observable, scheduleManager);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class BusRouteDecorator implements RouteTransportPublic {
         return route.getRules();
     }
 
-    public Collection<BusStation> getStations() {
+    public Collection<Station> getStations() {
         return stations;
     }
 

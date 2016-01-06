@@ -20,7 +20,7 @@ import java.util.UUID;
 @EqualsAndHashCode(exclude = {"arcList", "rules", "buses"})
 @RequiredArgsConstructor(staticName = "of")
 @ToString(exclude = "uuid")
-public class BusRoute implements RouteTransportPublic {
+public class Route implements RouteTransportPublic {
 
     private UUID uuid = UUID.randomUUID();
     private final String name;

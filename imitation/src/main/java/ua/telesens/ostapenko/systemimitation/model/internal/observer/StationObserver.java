@@ -2,8 +2,6 @@ package ua.telesens.ostapenko.systemimitation.model.internal.observer;
 
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import ua.telesens.ostapenko.systemimitation.api.PassengerManager;
-import ua.telesens.ostapenko.systemimitation.api.RouteManager;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObserver;
 import ua.telesens.ostapenko.systemimitation.model.internal.*;
 
@@ -15,29 +13,29 @@ import java.util.*;
  * @since 14.12.15
  */
 @Slf4j
-@EqualsAndHashCode(exclude = {"passengers", "routes", "countPassenger"})
-public class StationObserver implements SystemImitationObserver, PassengerManager, RouteManager {
+@EqualsAndHashCode(exclude = {"passengers", "routes", "countPassenger","lostPassenger"})
+public class StationObserver implements SystemImitationObserver {
 
-    private final BusStation station;
-    private Map<BusRouteDecorator, Map<RouteDirection, Queue<Passenger>>> passengers = Collections.emptyMap();
+    private final Station station;
+    private Map<RouteDecorator, Map<RouteDirection, Queue<Passenger>>> passengers = Collections.emptyMap();
     //Use from optimize process generation passenger
-    private Collection<BusRouteDecorator> routes = Collections.emptyList();
+    private Collection<RouteDecorator> routes = Collections.emptyList();
     private long countPassenger;
+    private long lostPassenger;
 
-    private StationObserver(BusStation station, BusRouteDecorator route) {
+    private StationObserver(Station station, RouteDecorator route) {
         this.station = station;
         this.routes = new ArrayList<>();
         this.passengers = new HashMap<>();
         registerRoute(route);
     }
 
-    public static StationObserver of(BusStation station, BusRouteDecorator route) {
+    public static StationObserver of(Station station, RouteDecorator route) {
         return new StationObserver(station, route);
     }
 
     // FIXME: 17.12.15 Add my exception
-    @Override
-    public void addPassenger(BusRouteDecorator route, RouteDirection direction, Passenger passenger) throws IllegalStateException {
+    public void addPassenger(RouteDecorator route, RouteDirection direction, Passenger passenger) throws IllegalStateException {
         if (passenger.getStation().equals(station)) {
             throw new IllegalStateException(station + "\tNot valid\t" + passenger);
         }
@@ -52,8 +50,7 @@ public class StationObserver implements SystemImitationObserver, PassengerManage
         countPassenger++;
     }
 
-    @Override
-    public Passenger getPassenger(BusRouteDecorator route, RouteDirection direction) {
+    public Passenger getPassenger(RouteDecorator route, RouteDirection direction) {
         if (hasNextPassenger(route, direction)) {
             countPassenger--;
             return this.passengers.get(route).get(direction).poll();
@@ -61,7 +58,7 @@ public class StationObserver implements SystemImitationObserver, PassengerManage
         throw new IllegalStateException();
     }
 
-    public boolean hasNextPassenger(BusRouteDecorator route, RouteDirection direction) {
+    public boolean hasNextPassenger(RouteDecorator route, RouteDirection direction) {
         return !passengers.get(route).get(direction).isEmpty();
     }
 
@@ -87,12 +84,12 @@ public class StationObserver implements SystemImitationObserver, PassengerManage
 
     public void clean() {
         passengers.forEach((route, quePassenger) -> quePassenger.forEach((direction, que) -> que.clear()));
+        lostPassenger += countPassenger;
         countPassenger = 0;
         log.debug(String.format("%-12s%-20s", station.getName(), "Remove All Passenger"));
     }
 
-    @Override
-    public void registerRoute(BusRouteDecorator route) {
+    public void registerRoute(RouteDecorator route) {
         if (routes.contains(route)) {
             return;
         }
@@ -108,7 +105,7 @@ public class StationObserver implements SystemImitationObserver, PassengerManage
 
     private void genPassengers(int count) {
         RouteDirection direction;
-        BusRouteDecorator route;
+        RouteDecorator route;
         Passenger passenger;
         StationObserver stationFinal;
         for (int i = 0; i < count; i++) {
@@ -125,8 +122,8 @@ public class StationObserver implements SystemImitationObserver, PassengerManage
         }
     }
 
-    private BusRouteDecorator getRandomRoute() {
-        List<BusRouteDecorator> buff = new ArrayList<>();
+    private RouteDecorator getRandomRoute() {
+        List<RouteDecorator> buff = new ArrayList<>();
         buff.addAll(routes);
         Collections.shuffle(buff);
         return buff.stream().findFirst().get();
@@ -136,7 +133,11 @@ public class StationObserver implements SystemImitationObserver, PassengerManage
         return countPassenger;
     }
 
-    public BusStation getStation() {
+    public Station getStation() {
         return station;
+    }
+
+    public long getLostPassenger() {
+        return lostPassenger;
     }
 }

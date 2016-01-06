@@ -19,8 +19,8 @@ import java.util.UUID;
 public class RouteArc {
 
     private UUID uuid = UUID.randomUUID();
-    private final BusStation start;
-    private final BusStation end;
+    private final Station start;
+    private final Station end;
     private final LocalTime interval;
 
 }

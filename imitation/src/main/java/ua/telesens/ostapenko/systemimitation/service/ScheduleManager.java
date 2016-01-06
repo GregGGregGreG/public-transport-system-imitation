@@ -10,7 +10,7 @@ import java.util.*;
 
 import static ua.telesens.ostapenko.systemimitation.model.internal.RouteDirection.BACK;
 import static ua.telesens.ostapenko.systemimitation.model.internal.RouteDirection.STRAIGHT;
-import static ua.telesens.ostapenko.systemimitation.model.internal.RouteStationType.*;
+import static ua.telesens.ostapenko.systemimitation.model.internal.StationType.*;
 import static ua.telesens.ostapenko.systemimitation.model.internal.RouteType.CYCLE;
 
 /**
@@ -24,12 +24,12 @@ public class ScheduleManager {
     // FIXME: 05.01.16 BADDDDDDDDDDDDDDDDDDDd
     // FIXME: 05.01.16 BADDDDDDDDDDDDDDDDDDDd
     // FIXME: 04.01.16 Bad algorithm!!!!!!!!!!!!!!!
-    public void createSchedule(BusRouteDecorator route) {
+    public void createSchedule(RouteDecorator route) {
         LocalTime starting;
         LocalTime time;
         LocalTime ruleEndTime;
         RouteDirection direction;
-        RouteStationType routeStationType;
+        StationType stationType;
         List<ScheduleLine> buff;
         List<StationObserver> stationObservers;
         List<RouteArc> arcs = (List<RouteArc>) route.getArcList();
@@ -64,11 +64,11 @@ public class ScheduleManager {
                             //Get station
                             station = stationObservers.get(i2);
 
-                            routeStationType = i2 == 0 ? INITIAL : i2 == stationObservers.size() - 1
+                            stationType = i2 == 0 ? INITIAL : i2 == stationObservers.size() - 1
                                     ? FINAL
                                     : INTERMEDIATE;
 
-                            buff.add(ScheduleLine.of(time, bus, direction, station, routeStationType));
+                            buff.add(ScheduleLine.of(time, bus, direction, station, stationType));
 
 
                             time = i2 == stationObservers.size() - 1

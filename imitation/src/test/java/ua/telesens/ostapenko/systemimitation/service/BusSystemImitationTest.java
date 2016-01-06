@@ -49,7 +49,7 @@ public class BusSystemImitationTest {
         Map<DayType, List<PassengerGenerationRule>> rulesGagarina = new HashMap<>();
         rulesGagarina.put(DayType.WORKDAY, workDayRulesOfGagarina);
         rulesGagarina.put(DayType.HOLIDAY, holidayRulesOfGagarina);
-        BusStation gagarina = BusStation.of("Gagarina", rulesGagarina);
+        Station gagarina = Station.of("Gagarina", rulesGagarina);
 
         /////////-------------------------------
         List<PassengerGenerationRule> workDayRulesOfNovoselevka = new ArrayList<>();
@@ -76,7 +76,7 @@ public class BusSystemImitationTest {
         Map<DayType, List<PassengerGenerationRule>> rulesNovoselevka = new HashMap<>();
         rulesNovoselevka.put(DayType.WORKDAY, workDayRulesOfNovoselevka);
         rulesNovoselevka.put(DayType.HOLIDAY, holidayRulesOfNovoselevka);
-        BusStation novoselevka = BusStation.of("Novoselevka", rulesNovoselevka);
+        Station novoselevka = Station.of("Novoselevka", rulesNovoselevka);
 
         /////////-------------------------------
         List<PassengerGenerationRule> workDayRulesOfDerchprom = new ArrayList<>();
@@ -103,7 +103,7 @@ public class BusSystemImitationTest {
         Map<DayType, List<PassengerGenerationRule>> rulesDerchprom = new HashMap<>();
         rulesDerchprom.put(DayType.WORKDAY, workDayRulesOfDerchprom);
         rulesDerchprom.put(DayType.HOLIDAY, holidayRulesOfDerchprom);
-        BusStation derchprom = BusStation.of("Derchprom", rulesDerchprom);
+        Station derchprom = Station.of("Derchprom", rulesDerchprom);
 
         ////-------------------------------------------->>>>>>
         List<RouteArc> arcs = new ArrayList<>();
@@ -126,15 +126,15 @@ public class BusSystemImitationTest {
 
         ////---------------------->
         List<RouteTrafficRule> holiDayTrafficRules = new ArrayList<>();
-        holiDayTrafficRules.add(RouteTrafficRule.of(2, 5, LocalTime.of(0, 15),LocalTime.of(0, 40)));
-        holiDayTrafficRules.add(RouteTrafficRule.of(1, 3, LocalTime.of(0, 18),LocalTime.of(0, 45)));
-        holiDayTrafficRules.add(RouteTrafficRule.of(2, 5, LocalTime.of(0, 15),LocalTime.of(0, 40)));
+        holiDayTrafficRules.add(RouteTrafficRule.of(2, 5, LocalTime.of(0, 15), LocalTime.of(0, 40)));
+        holiDayTrafficRules.add(RouteTrafficRule.of(1, 3, LocalTime.of(0, 18), LocalTime.of(0, 45)));
+        holiDayTrafficRules.add(RouteTrafficRule.of(2, 5, LocalTime.of(0, 15), LocalTime.of(0, 40)));
 
         Map<DayType, List<RouteTrafficRule>> trafficRules = new HashMap<>();
         trafficRules.put(DayType.WORKDAY, workDayTrafficRules);
         trafficRules.put(DayType.HOLIDAY, holiDayTrafficRules);
 
-        BusRoute route = BusRoute.of(
+        Route route = Route.of(
                 "232",
                 RouteType.CYCLE,
                 arcs,
@@ -142,14 +142,16 @@ public class BusSystemImitationTest {
                 LocalTime.of(6, 0),
                 trafficRules);
 
-        List<BusRoute> routes = new ArrayList<>();
+        List<Route> routes = new ArrayList<>();
         routes.add(route);
 
         BusSystemImitation imitation = new BusSystemImitation(routes,
                 LocalDateTime.of(2015, Month.NOVEMBER, 12, 6, 0),
                 LocalDateTime.of(2015, Month.NOVEMBER, 15, 23, 0)
         );
-        imitation.run();
+//        imitation.run();
+        BusSystemImitationStatistic busSystemImitationStatistic = BusSystemImitationStatistic.of(imitation);
+        busSystemImitationStatistic.execute().show().toXML();
 
     }
 }

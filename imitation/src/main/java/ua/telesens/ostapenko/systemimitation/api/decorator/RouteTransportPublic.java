@@ -12,6 +12,7 @@ import java.util.Map;
  * @since 29.12.15
  */
 public interface RouteTransportPublic {
+
     String getName();
 
     RouteType getType();

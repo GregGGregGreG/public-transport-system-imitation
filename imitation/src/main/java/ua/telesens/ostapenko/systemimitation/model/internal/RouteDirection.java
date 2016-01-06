@@ -15,7 +15,7 @@ public enum RouteDirection {
 
     STRAIGHT {
         @Override
-        public List<StationObserver> toStation(BusRouteDecorator route, StationObserver station) {
+        public List<StationObserver> toStation(RouteDecorator route, StationObserver station) {
             List<StationObserver> stations = new ArrayList<>(route.getStationObservers());
             int position = stations.indexOf(station);
 
@@ -27,7 +27,7 @@ public enum RouteDirection {
         }
     }, BACK {
         @Override
-        public List<StationObserver> toStation(BusRouteDecorator route, StationObserver station) {
+        public List<StationObserver> toStation(RouteDecorator route, StationObserver station) {
             List<StationObserver> stations = new ArrayList<>(route.getStationObservers());
             int position = stations.indexOf(station);
 
@@ -39,7 +39,7 @@ public enum RouteDirection {
         }
     };
 
-    public abstract List<StationObserver> toStation(BusRouteDecorator route, StationObserver station);
+    public abstract List<StationObserver> toStation(RouteDecorator route, StationObserver station);
 
     public static RouteDirection getRandom() {
         List<RouteDirection> letters = Arrays.asList(RouteDirection.values());
@@ -47,7 +47,7 @@ public enum RouteDirection {
         return letters.stream().findFirst().get();
     }
 
-    public static RouteDirection getRandom(BusRouteDecorator route, StationObserver station) {
+    public static RouteDirection getRandom(RouteDecorator route, StationObserver station) {
         List<StationObserver> stations = new ArrayList<>(route.getStationObservers());
         if (stations.indexOf(station) == 0) {
             //From initialize station

@@ -6,7 +6,7 @@ package ua.telesens.ostapenko.systemimitation.api;
  */
 public interface SystemImitation {
 
-    Report run();
+    void run();
 
     void stop();
 
