@@ -1,26 +1,23 @@
 package ua.telesens.ostapenko.systemimitation.model.internal;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 
-import java.util.UUID;
+import java.util.List;
 
 /**
  * @author root
- * @since 23.11.15
+ * @since 07.01.16
  */
 @Getter
 @RequiredArgsConstructor(staticName = "of")
 @EqualsAndHashCode
-@ToString(exclude = {"uuid", "capacity"})
-@XStreamAlias("bus")
-public class Bus {
+@XStreamAlias("passengerGenerationRules")
+public class PassengerGenerationRuleList {
 
-    private UUID uuid = UUID.randomUUID();
-    private final int number;
-    private final int capacity;
-
+    @XStreamImplicit
+    private final List<PassengerGenerationRule> passengerGenerationRules;
 }

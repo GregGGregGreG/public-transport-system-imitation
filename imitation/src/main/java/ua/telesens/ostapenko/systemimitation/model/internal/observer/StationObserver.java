@@ -1,9 +1,11 @@
 package ua.telesens.ostapenko.systemimitation.model.internal.observer;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObserver;
 import ua.telesens.ostapenko.systemimitation.model.internal.*;
+import ua.telesens.ostapenko.systemimitation.service.PassengerGenerator;
 
 import java.time.LocalTime;
 import java.util.*;
@@ -13,13 +15,16 @@ import java.util.*;
  * @since 14.12.15
  */
 @Slf4j
-@EqualsAndHashCode(exclude = {"passengers", "routes", "countPassenger","lostPassenger"})
+@EqualsAndHashCode(exclude = {"passengers", "routes", "countPassenger", "lostPassenger"})
 public class StationObserver implements SystemImitationObserver {
 
     private final Station station;
     private Map<RouteDecorator, Map<RouteDirection, Queue<Passenger>>> passengers = Collections.emptyMap();
+    @Getter
+    private PassengerGenerator passengerGenerator;
     //Use from optimize process generation passenger
-    private Collection<RouteDecorator> routes = Collections.emptyList();
+    @Getter
+    private List<RouteDecorator> routes = Collections.emptyList();
     private long countPassenger;
     private long lostPassenger;
 
@@ -27,23 +32,27 @@ public class StationObserver implements SystemImitationObserver {
         this.station = station;
         this.routes = new ArrayList<>();
         this.passengers = new HashMap<>();
-        registerRoute(route);
+        this.registerRoute(route);
+        this.passengerGenerator = new PassengerGenerator(this);
     }
 
     public static StationObserver of(Station station, RouteDecorator route) {
         return new StationObserver(station, route);
     }
 
-    // FIXME: 17.12.15 Add my exception
-    public void addPassenger(RouteDecorator route, RouteDirection direction, Passenger passenger) throws IllegalStateException {
-        if (passenger.getStation().equals(station)) {
+    public void addPassenger(List<Passenger> passengers) throws IllegalStateException {
+        passengers.stream().parallel().forEach(this::addPassenger);
+    }
+
+    public void addPassenger(Passenger passenger) throws IllegalStateException {
+        if (passenger.getStation().equals(this)) {
             throw new IllegalStateException(station + "\tNot valid\t" + passenger);
         }
         //Get Route
-        Map<RouteDirection, Queue<Passenger>> routeMovementQueueMap = passengers.get(route);
+        Map<RouteDirection, Queue<Passenger>> routeMovementQueueMap = passengers.get(passenger.getRoute());
         routeMovementQueueMap
                 //Get direction route
-                .get(direction)
+                .get(passenger.getDirection())
                 //Add passenger toStation que
                 .add(passenger);
         //Increment count passenger
@@ -64,22 +73,9 @@ public class StationObserver implements SystemImitationObserver {
 
     @Override
     public void updateEvent(ImitationEvent event) {
-        List<PassengerGenerationRule> rules = station.getRules().get(event.getDayType());
+        DayType dayType = event.getDayType();
         LocalTime time = event.getTime().toLocalTime();
-        rules.stream()
-                .filter(rule -> rule.is(time))
-                .forEach(rule -> {
-                    int count = rule.execute(time);
-                    genPassengers(count);
-
-                    log.debug(String.format("%-6s|%-12s|%-12s|%-20s",
-                            event.getTime(),
-                            station.getName(),
-                            "Generate " + count,
-                            "Current count passenger " + getCountPassenger()
-
-                    ));
-                });
+        addPassenger(passengerGenerator.execute(dayType, time));
     }
 
     public void clean() {
@@ -101,32 +97,6 @@ public class StationObserver implements SystemImitationObserver {
     @Override
     public String toString() {
         return String.valueOf(station);
-    }
-
-    private void genPassengers(int count) {
-        RouteDirection direction;
-        RouteDecorator route;
-        Passenger passenger;
-        StationObserver stationFinal;
-        for (int i = 0; i < count; i++) {
-            route = getRandomRoute();
-            direction = RouteDirection.getRandom(route, this);
-            stationFinal = direction.toStation(route, this)
-                    .stream()
-                    .findFirst()
-                    .get();
-            passenger = Passenger.of(stationFinal);
-
-            addPassenger(route, direction, passenger);
-            log.trace(station + "Gen new passenger\t" + direction + "\t" + passenger);
-        }
-    }
-
-    private RouteDecorator getRandomRoute() {
-        List<RouteDecorator> buff = new ArrayList<>();
-        buff.addAll(routes);
-        Collections.shuffle(buff);
-        return buff.stream().findFirst().get();
     }
 
     private long getCountPassenger() {

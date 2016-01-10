@@ -39,6 +39,6 @@ public class ScheduleTest {
 //                .type(TypeRoute.LINE)
 //                .build();
 //        routes.add(route_232);
-//        assertEquals("  ", new Schedule(routes).execute());
+//        assertEquals("  ", new Schedule(routes).getPassengerGenerationCount());
     }
 }

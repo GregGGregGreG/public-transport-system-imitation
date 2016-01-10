@@ -16,6 +16,5 @@ public class DayTypeTest {
     public void to() throws Exception {
         LocalDateTime time = LocalDateTime.of(2015, Month.NOVEMBER, 12, 6, 0);
         TestCase.assertEquals(DayType.WORKDAY, DayType.to(time.getDayOfWeek()));
-
     }
 }

@@ -39,7 +39,7 @@ public class ScheduleManager {
         StationObserver station;
 
         for (DayType dayType : DayType.values()) {
-            // Get route from day type
+            // Get route rule from day type
             if (!route.getRules().containsKey(dayType)) {
                 continue;
             }
@@ -47,7 +47,7 @@ public class ScheduleManager {
             starting = route.getStarting();
             time = starting;
             ruleEndTime = starting;
-            List<RouteTrafficRule> rules = route.getRules().get(dayType);
+            List<RouteTrafficRule> rules = route.getRules().get(dayType).getRouteTrafficRules();
             buff = new ArrayList<>();
 
             for (RouteTrafficRule rule : rules) {
@@ -103,9 +103,7 @@ public class ScheduleManager {
     }
 
     private RouteDirection directionTo(BusObserver bus, DayType dayType) {
-        // FIXME: 04.01.16 Bad style
         return Objects.nonNull(bus.getSchedules().get(dayType))
-//                ? switchDirect(new LinkedList<>(bus.getSchedules().get(dayType)).getLast().getDirection())
                 ? switchDirect(Iterables.getLast(bus.getSchedules().get(dayType)).getDirection())
                 : STRAIGHT;
     }

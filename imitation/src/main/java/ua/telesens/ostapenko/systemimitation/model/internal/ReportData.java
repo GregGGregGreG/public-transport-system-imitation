@@ -2,6 +2,7 @@ package ua.telesens.ostapenko.systemimitation.model.internal;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.time.Duration;
@@ -15,6 +16,7 @@ import java.util.Map;
  */
 @Builder
 @Getter
+@EqualsAndHashCode
 @XStreamAlias("systemImitationReport")
 public class ReportData {
 
@@ -24,9 +26,9 @@ public class ReportData {
     private final int routes;
     private final int stations;
     private final int buses;
-    @XStreamAlias("startGenerationPassenger")
+    @XStreamAlias("minStartGenerationPassenger")
     private final Map<DayType, LocalTime> startDay;
-    @XStreamAlias("endGenerationPassenger")
+    @XStreamAlias("maxEndGenerationPassenger")
     private final Map<DayType, LocalTime> endDay;
     private final int busAvgCapacity;
     private final int numberTrips;

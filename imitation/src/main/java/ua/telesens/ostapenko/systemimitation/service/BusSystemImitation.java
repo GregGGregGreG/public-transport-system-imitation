@@ -1,6 +1,6 @@
 package ua.telesens.ostapenko.systemimitation.service;
 
-import com.google.common.collect.Iterables;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ua.telesens.ostapenko.systemimitation.api.SystemImitation;
@@ -10,7 +10,6 @@ import ua.telesens.ostapenko.systemimitation.model.internal.*;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.BusObserver;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.StationObserver;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
@@ -21,10 +20,12 @@ import java.util.*;
  */
 @Slf4j
 @Getter
+@EqualsAndHashCode
 public class BusSystemImitation implements SystemImitation, SystemImitationObservable {
 
     private static final ScheduleManager SCHEDULE_MANAGER = new ScheduleManager();
     private static final int IMITATION_STEP = 1;
+    private RouteList source;
     private List<RouteDecorator> routes = Collections.emptyList();
     private List<StationObserver> stations = Collections.emptyList();
     private List<BusObserver> buses = Collections.emptyList();
@@ -34,7 +35,8 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
     private Map<DayType, LocalTime> endDay = Collections.emptyMap();
     private Map<DayType, LocalTime> startDay = Collections.emptyMap();
 
-    public BusSystemImitation(List<Route> routes, LocalDateTime starting, LocalDateTime end) {
+    public BusSystemImitation(RouteList source, LocalDateTime starting, LocalDateTime end) {
+        this.source = source;
         this.routes = new ArrayList<>();
         this.stations = new ArrayList<>();
         this.buses = new ArrayList<>();
@@ -43,10 +45,9 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         this.end = end;
         this.endDay = new HashMap<>();
         this.startDay = new HashMap<>();
-        initRoutes(routes);
+        initRoutes();
         initEndDay();
         initStartDay();
-        log.debug(String.format("%-20s%-18s%-18s%-9s", "Period imitation", starting, end, Duration.between(starting, end)));
     }
 
     @Override
@@ -89,17 +90,17 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
 
     @Override
     public void notifyAllObservers() {
-       try {
-           ImitationEvent event = createEvent();
-           stations
-                   .parallelStream()
-                   .forEach(observer -> observer.updateEvent(event));
-           buses
-                   .parallelStream()
-                   .forEach(observer -> observer.updateEvent(event));
-       }catch (NullPointerException e ){
-           e.printStackTrace();
-       }
+        try {
+            ImitationEvent event = createEvent();
+            stations
+                    .parallelStream()
+                    .forEach(observer -> observer.updateEvent(event));
+            buses
+                    .parallelStream()
+                    .forEach(observer -> observer.updateEvent(event));
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -125,51 +126,50 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         return ImitationEvent.of(imitationTime, DayType.to(imitationTime.getDayOfWeek()));
     }
 
-    private void initRoutes(List<Route> routes) {
-        routes.parallelStream().forEach(route -> this.routes.add(RouteDecorator.of(route, this, SCHEDULE_MANAGER)));
-        log.debug(String.format("%-9s%-3d%-12s", "Register", routes.size(), "Route"));
-        routes.forEach(busRoute -> log.debug(String.valueOf(busRoute)));
-        log.debug(String.format("%-9s%-3d%-12s", "Register", buses.size(), "Bus"));
-        buses.forEach(busObserver -> log.debug(String.valueOf(busObserver)));
-        log.debug(String.format("%-9s%-3d%-12s", "Register", stations.size(), "Station"));
-        stations.forEach(stationObserver -> log.debug(String.valueOf(stationObserver)));
+    private void initRoutes() {
+        source
+                .getRoutes()
+                .parallelStream().
+                forEach(route -> this.routes.add(RouteDecorator.of(route, this, SCHEDULE_MANAGER)));
     }
 
     private void initStartDay() {
-        stations.forEach(station -> station.getStation().getRules().forEach((this::addStartDay)));
+        stations.forEach(station -> station.getPassengerGenerator().getSchedule().forEach((this::addStartDay)));
     }
 
-    private void addStartDay(DayType day, List<PassengerGenerationRule> rules) {
-        PassengerGenerationRule rule = rules
+    private void addStartDay(DayType day, List<PassengerGenerationSchedule> rules) {
+        PassengerGenerationSchedule rule = rules
                 .stream()
-                .max((o1, o2) -> Collections.max(o1.getSchedule()).compareTo(Collections.max(o2.getSchedule())))
+                .min((o1, o2) -> o1.getStart().compareTo(o2.getStart()))
                 .get();
 
-        LocalTime time = Iterables.getLast(rule.getSchedule());
+        LocalTime time = rule.getStart();
 
-        if (Objects.isNull(endDay.get(day))) {
-            endDay.put(day, time);
-        } else if (time.isAfter(endDay.get(day))) {
-            endDay.put(day, time);
-        }
-    }
-
-    private void initEndDay() {
-        stations.forEach(station -> station.getStation().getRules().forEach((this::addEndDay)));
-    }
-
-    private void addEndDay(DayType day, List<PassengerGenerationRule> rules) {
-        PassengerGenerationRule rule = rules
-                .stream()
-                .min((o1, o2) -> Collections.min(o1.getSchedule()).compareTo(Collections.min(o2.getSchedule())))
-                .get();
-
-        LocalTime time = Collections.min(rule.getSchedule());
 
         if (Objects.isNull(startDay.get(day))) {
             startDay.put(day, time);
         } else if (time.isBefore(startDay.get(day))) {
             startDay.put(day, time);
+        }
+    }
+
+    private void initEndDay() {
+        stations.forEach(station -> station.getPassengerGenerator().getSchedule().forEach((this::addEndDay)));
+    }
+
+    private void addEndDay(DayType day, List<PassengerGenerationSchedule> rules) {
+        PassengerGenerationSchedule rule = rules
+                .stream()
+                .max((o1, o2) -> o1.getEnd().compareTo(o2.getEnd()))
+                .get();
+
+
+        LocalTime time = rule.getEnd();
+
+        if (Objects.isNull(endDay.get(day))) {
+            endDay.put(day, time);
+        } else if (time.isAfter(endDay.get(day))) {
+            endDay.put(day, time);
         }
     }
 

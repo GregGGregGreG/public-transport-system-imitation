@@ -4,7 +4,6 @@ import ua.telesens.ostapenko.systemimitation.model.internal.*;
 
 import java.time.LocalTime;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,6 +22,6 @@ public interface RouteTransportPublic {
 
     LocalTime getStarting();
 
-    Map<DayType, List<RouteTrafficRule>> getRules();
+    Map<DayType, RouteTrafficRuleList> getRules();
 
 }

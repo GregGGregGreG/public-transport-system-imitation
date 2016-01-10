@@ -14,6 +14,8 @@ import ua.telesens.ostapenko.systemimitation.model.internal.observer.StationObse
 @ToString
 public class Passenger {
 
+    private final RouteDecorator route;
+    private final RouteDirection direction;
     private final StationObserver station;
 
 }

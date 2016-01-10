@@ -25,7 +25,7 @@ public class RouteDecorator implements RouteTransportPublic {
         this.stations = new ArrayList<>();
         this.busObservers = new ArrayList<>();
         this.stationObservers = new ArrayList<>();
-        parceArcStation();
+        parseArcStation();
         linkTo(observable);
         scheduleManager.createSchedule(this);
     }
@@ -60,7 +60,7 @@ public class RouteDecorator implements RouteTransportPublic {
     }
 
     @Override
-    public Map<DayType, List<RouteTrafficRule>> getRules() {
+    public Map<DayType, RouteTrafficRuleList> getRules() {
         return route.getRules();
     }
 
@@ -92,7 +92,7 @@ public class RouteDecorator implements RouteTransportPublic {
                 .forEach(bus -> busObservers.add((BusObserver) observable.register(BusObserver.of(bus, this))));
     }
 
-    private void parceArcStation() {
+    private void parseArcStation() {
         List<RouteArc> arcs = (List<RouteArc>) getArcList();
         int size = arcs.size();
         for (int i = 0; i < size; i++) {

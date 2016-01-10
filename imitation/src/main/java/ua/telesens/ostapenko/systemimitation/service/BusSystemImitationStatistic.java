@@ -1,12 +1,8 @@
 package ua.telesens.ostapenko.systemimitation.service;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.converters.extended.NamedMapConverter;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import ua.telesens.ostapenko.systemimitation.api.BusStatistic;
 import ua.telesens.ostapenko.systemimitation.api.Report;
@@ -14,13 +10,15 @@ import ua.telesens.ostapenko.systemimitation.model.internal.DayType;
 import ua.telesens.ostapenko.systemimitation.model.internal.ReportData;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.BusObserver;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.StationObserver;
+import ua.telesens.ostapenko.systemimitation.xstream.converters.DurationConverter;
+import ua.telesens.ostapenko.systemimitation.xstream.converters.LocaleDateTimeConverter;
+import ua.telesens.ostapenko.systemimitation.xstream.converters.LocaleTimeConverter;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
@@ -51,6 +49,7 @@ class BusSystemImitationStatistic {
         return new Rep(systemImitation);
     }
 
+    @EqualsAndHashCode
     private class Rep implements Report {
         private BusSystemImitation systemImitation;
         private static final String FORMAT = "%-40s%-20s";
@@ -161,63 +160,6 @@ class BusSystemImitationStatistic {
                 result += stationObserver.getLostPassenger();
             }
             return result;
-        }
-
-
-        //XStream converter
-
-        class LocaleDateTimeConverter implements Converter {
-
-            public boolean canConvert(Class clazz) {
-                return LocalDateTime.class.isAssignableFrom(clazz);
-            }
-
-            public void marshal(Object value, HierarchicalStreamWriter writer,
-                                MarshallingContext context) {
-                LocalDateTime localDateTime = (LocalDateTime) value;
-                writer.setValue(localDateTime.toString());
-            }
-
-            public Object unmarshal(HierarchicalStreamReader reader,
-                                    UnmarshallingContext context) {
-                return LocalDateTime.parse(reader.getValue());
-            }
-        }
-
-        class LocaleTimeConverter implements Converter {
-
-            public boolean canConvert(Class clazz) {
-                return LocalTime.class.isAssignableFrom(clazz);
-            }
-
-            public void marshal(Object value, HierarchicalStreamWriter writer,
-                                MarshallingContext context) {
-                LocalTime localTime = (LocalTime) value;
-                writer.setValue(localTime.toString());
-            }
-
-            public Object unmarshal(HierarchicalStreamReader reader,
-                                    UnmarshallingContext context) {
-                return LocalTime.parse(reader.getValue());
-            }
-        }
-
-        class DurationConverter implements Converter {
-
-            public boolean canConvert(Class clazz) {
-                return Duration.class.isAssignableFrom(clazz);
-            }
-
-            public void marshal(Object value, HierarchicalStreamWriter writer,
-                                MarshallingContext context) {
-                Duration duration = (Duration) value;
-                writer.setValue(duration.toString());
-            }
-
-            public Object unmarshal(HierarchicalStreamReader reader,
-                                    UnmarshallingContext context) {
-                return Duration.parse(reader.getValue());
-            }
         }
     }
 }
