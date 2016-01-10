@@ -24,7 +24,7 @@ import java.util.*;
 public class BusSystemImitation implements SystemImitation, SystemImitationObservable {
 
     private static final ScheduleManager SCHEDULE_MANAGER = new ScheduleManager();
-    private static final int IMITATION_STEP = 1;
+    public static final int IMITATION_STEP = 1;
     private RouteList source;
     private List<RouteDecorator> routes = Collections.emptyList();
     private List<StationObserver> stations = Collections.emptyList();

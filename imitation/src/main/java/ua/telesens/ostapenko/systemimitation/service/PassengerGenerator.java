@@ -16,6 +16,8 @@ import java.util.stream.IntStream;
 @Slf4j
 public class PassengerGenerator {
 
+    private static final int MIN_TIME_WAITING = 15;
+    private static final int MAX_TIME_WAITING = 40;
     private final StationObserver observer;
     @Getter
     private Map<DayType, List<PassengerGenerationSchedule>> schedule = Collections.emptyMap();
@@ -42,7 +44,8 @@ public class PassengerGenerator {
 
     private List<Passenger> genPassengers(int count) {
         List<Passenger> result = new ArrayList<>();
-        IntStream.range(0, random.nextInt(count)).forEach(e -> result.add(genPassenger()));
+        int randCount = random.nextInt(count);
+        IntStream.range(0, randCount).forEach(e -> result.add(genPassenger()));
         return result;
     }
 
@@ -54,7 +57,10 @@ public class PassengerGenerator {
                 .findFirst()
                 .get();
 
-        Passenger passenger = Passenger.of(route, direction, stationFinal);
+        int randTimeWait = random.ints(MIN_TIME_WAITING, MAX_TIME_WAITING).findFirst().getAsInt();
+        LocalTime waiting = LocalTime.of(0, 0).plusMinutes(randTimeWait);
+
+        Passenger passenger = Passenger.of(route, direction, stationFinal, waiting);
 
         log.trace(observer.getStation().getName() + "Gen new passenger\t" + direction + "\t" + passenger);
         return passenger;

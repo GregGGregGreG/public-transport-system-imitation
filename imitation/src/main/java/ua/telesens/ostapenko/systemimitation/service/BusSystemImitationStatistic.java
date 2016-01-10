@@ -71,6 +71,7 @@ class BusSystemImitationStatistic {
                     .transportedPassenger(getAllPassenger())
                     .busesPercentageOccupancy(getOccupancy())
                     .lostPassenger(getLostPassenger())
+                    .lazyPassenger(getLazyPassenger())
                     .build();
         }
 
@@ -92,6 +93,7 @@ class BusSystemImitationStatistic {
             log.info(String.format(FORMAT, "All transported passenger", data.getTransportedPassenger()));
             log.info(String.format(FORMAT, "Occupancy Percentage of buses ", data.getBusesPercentageOccupancy()));
             log.info(String.format(FORMAT, "Lost passenger", data.getLostPassenger()));
+            log.info(String.format(FORMAT, "Lazy passenger", data.getLazyPassenger()));
             return this;
         }
 
@@ -158,6 +160,14 @@ class BusSystemImitationStatistic {
             int result = 0;
             for (StationObserver stationObserver : systemImitation.getStations()) {
                 result += stationObserver.getLostPassenger();
+            }
+            return result;
+        }
+
+        private int getLazyPassenger() {
+            int result = 0;
+            for (StationObserver stationObserver : systemImitation.getStations()) {
+                result += stationObserver.getLazyPassenger();
             }
             return result;
         }

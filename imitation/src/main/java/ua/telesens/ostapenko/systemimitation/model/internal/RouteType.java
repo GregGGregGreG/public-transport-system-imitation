@@ -1,9 +1,8 @@
 package ua.telesens.ostapenko.systemimitation.model.internal;
 
-import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * @author root
@@ -13,22 +12,22 @@ public enum RouteType {
 
     LINE {
         @Override
-        public Map<RouteDirection, Queue<Passenger>> getQue() {
-            Map<RouteDirection, Queue<Passenger>> que = new HashMap<>();
-            que.put(RouteDirection.STRAIGHT, new ArrayDeque<>());
+        public Map<RouteDirection, ConcurrentLinkedDeque<Passenger>> getQue() {
+            Map<RouteDirection, ConcurrentLinkedDeque<Passenger>> que = new HashMap<>();
+            que.put(RouteDirection.STRAIGHT, new ConcurrentLinkedDeque<>());
             return que;
         }
     }, CYCLE {
         @Override
-        public Map<RouteDirection, Queue<Passenger>> getQue() {
-            Map<RouteDirection, Queue<Passenger>> que = new HashMap<>();
+        public Map<RouteDirection, ConcurrentLinkedDeque<Passenger>> getQue() {
+            Map<RouteDirection, ConcurrentLinkedDeque<Passenger>> que = new HashMap<>();
             for (RouteDirection direction : RouteDirection.values()) {
-                que.put(direction, new ArrayDeque<>());
+                que.put(direction, new ConcurrentLinkedDeque<>());
             }
             return que;
         }
     };
 
-    public abstract Map<RouteDirection, Queue<Passenger>> getQue();
+    public abstract Map<RouteDirection, ConcurrentLinkedDeque<Passenger>> getQue();
 
 }

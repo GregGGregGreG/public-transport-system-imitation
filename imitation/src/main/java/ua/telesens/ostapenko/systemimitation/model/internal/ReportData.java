@@ -34,6 +34,7 @@ public class ReportData {
     private final int numberTrips;
     private final int transportedPassenger;
     private final double busesPercentageOccupancy;
-    private final int lostPassenger;
+    private final long lostPassenger;
+    private final long lazyPassenger;
 
 }

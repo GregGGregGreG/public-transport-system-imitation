@@ -3,23 +3,25 @@ package ua.telesens.ostapenko.systemimitation.model.internal.observer;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import ua.telesens.ostapenko.systemimitation.api.observer.PassengerObservable;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObserver;
 import ua.telesens.ostapenko.systemimitation.model.internal.*;
 import ua.telesens.ostapenko.systemimitation.service.PassengerGenerator;
 
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * @author root
  * @since 14.12.15
  */
 @Slf4j
-@EqualsAndHashCode(exclude = {"passengers", "routes", "countPassenger", "lostPassenger"})
-public class StationObserver implements SystemImitationObserver {
+@EqualsAndHashCode(exclude = {"passengers", "routes", "countPassenger", "lostPassenger", "lazyPassenger"})
+public class StationObserver implements SystemImitationObserver, PassengerObservable {
 
     private final Station station;
-    private Map<RouteDecorator, Map<RouteDirection, Queue<Passenger>>> passengers = Collections.emptyMap();
+    private Map<RouteDecorator, Map<RouteDirection, ConcurrentLinkedDeque<Passenger>>> passengers = Collections.emptyMap();
     @Getter
     private PassengerGenerator passengerGenerator;
     //Use from optimize process generation passenger
@@ -27,6 +29,7 @@ public class StationObserver implements SystemImitationObserver {
     private List<RouteDecorator> routes = Collections.emptyList();
     private long countPassenger;
     private long lostPassenger;
+    private long lazyPassenger;
 
     private StationObserver(Station station, RouteDecorator route) {
         this.station = station;
@@ -49,7 +52,7 @@ public class StationObserver implements SystemImitationObserver {
             throw new IllegalStateException(station + "\tNot valid\t" + passenger);
         }
         //Get Route
-        Map<RouteDirection, Queue<Passenger>> routeMovementQueueMap = passengers.get(passenger.getRoute());
+        Map<RouteDirection, ConcurrentLinkedDeque<Passenger>> routeMovementQueueMap = passengers.get(passenger.getRoute());
         routeMovementQueueMap
                 //Get direction route
                 .get(passenger.getDirection())
@@ -75,6 +78,7 @@ public class StationObserver implements SystemImitationObserver {
     public void updateEvent(ImitationEvent event) {
         DayType dayType = event.getDayType();
         LocalTime time = event.getTime().toLocalTime();
+        notifyAllPassenger();
         addPassenger(passengerGenerator.execute(dayType, time));
     }
 
@@ -109,5 +113,26 @@ public class StationObserver implements SystemImitationObserver {
 
     public long getLostPassenger() {
         return lostPassenger;
+    }
+
+    public long getLazyPassenger() {
+        return lazyPassenger;
+    }
+
+    @Override
+    public void notifyAllPassenger() {
+        passengers.forEach((route, directions) -> directions.forEach(this::notifyAllPassenger));
+    }
+
+    private void notifyAllPassenger(RouteDirection direction, ConcurrentLinkedDeque<Passenger> passengers) {
+        passengers.stream().parallel().forEach(passenger -> removeLazy(passengers, passenger.updateTimer()));
+    }
+
+    private void removeLazy(ConcurrentLinkedDeque<Passenger> passengers, Passenger passenger) {
+        if (passenger.isGone()) {
+            passengers.remove(passenger);
+            lazyPassenger++;
+            countPassenger--;
+        }
     }
 }
