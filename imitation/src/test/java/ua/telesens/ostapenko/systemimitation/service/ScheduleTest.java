@@ -14,7 +14,7 @@ public class ScheduleTest {
 //        List<Bus> buses = new ArrayList<>();
 //        List<Route> routes = new ArrayList<>();
 //
-////        Create stop
+////        Create timeStop
 //        Stop stopA = new Stop("A");
 //        Stop stopB = new Stop("B");
 //        Stop stopC = new Stop("C");

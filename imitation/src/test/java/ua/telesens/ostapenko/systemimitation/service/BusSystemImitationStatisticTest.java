@@ -10,9 +10,10 @@ import java.time.Month;
 
 /**
  * @author root
- * @since 29.12.15
+ * @since 10.01.16
  */
-public class BusSystemImitationTest {
+public class BusSystemImitationStatisticTest {
+
 
     private static final LocalDateTime STARTING = LocalDateTime.of(2015, Month.NOVEMBER, 12, 6, 0);
     private static final LocalDateTime END = LocalDateTime.of(2015, Month.NOVEMBER, 15, 23, 0);
@@ -24,8 +25,9 @@ public class BusSystemImitationTest {
     }
 
     @Test
-    public void run() throws Exception {
+    public void execute() throws Exception {
 //        BusSystemImitation imitation = new BusSystemImitation(source, STARTING, END);
+//        BusSystemImitationStatistic statistic = BusSystemImitationStatistic.of(imitation);
+//        statistic.execute();
     }
-
 }

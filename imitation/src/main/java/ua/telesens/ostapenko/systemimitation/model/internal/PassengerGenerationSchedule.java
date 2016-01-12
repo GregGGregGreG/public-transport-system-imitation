@@ -5,7 +5,6 @@ import lombok.Getter;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,10 +22,9 @@ public class PassengerGenerationSchedule {
     @Getter
     private final LocalTime interval;
     @Getter
-    private List<LocalTime> schedule = Collections.emptyList();
+    private List<LocalTime> schedule = new ArrayList<>();
 
     private PassengerGenerationSchedule(PassengerGenerationRule rule) {
-        this.schedule = new ArrayList<>();
         this.start = rule.getStart();
         this.interval = rule.getInterval();
         this.end = rule.getEnd();

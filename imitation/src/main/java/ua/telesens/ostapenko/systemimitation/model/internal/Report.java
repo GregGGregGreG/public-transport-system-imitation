@@ -18,7 +18,7 @@ import java.util.Map;
 @Getter
 @EqualsAndHashCode
 @XStreamAlias("systemImitationReport")
-public class ReportData {
+public class Report {
 
     private final LocalDateTime starting;
     private final LocalDateTime end;

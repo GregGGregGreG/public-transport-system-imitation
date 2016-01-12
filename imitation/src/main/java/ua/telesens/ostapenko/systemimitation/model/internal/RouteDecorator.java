@@ -7,7 +7,10 @@ import ua.telesens.ostapenko.systemimitation.model.internal.observer.StationObse
 import ua.telesens.ostapenko.systemimitation.service.ScheduleManager;
 
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author root
@@ -15,23 +18,21 @@ import java.util.*;
  */
 public class RouteDecorator implements RouteTransportPublic {
 
+    private static final ScheduleManager SCHEDULE_MANAGER = new ScheduleManager();
     private final Route route;
-    private Collection<Station> stations = Collections.emptyList();
-    private Collection<BusObserver> busObservers = Collections.emptyList();
-    private Collection<StationObserver> stationObservers = Collections.emptyList();
+    private Collection<Station> stations = new ArrayList<>();
+    private Collection<BusObserver> busObservers = new ArrayList<>();
+    private Collection<StationObserver> stationObservers = new ArrayList<>();
 
-    private RouteDecorator(Route route, SystemImitationObservable observable, ScheduleManager scheduleManager) {
+    private RouteDecorator(Route route, SystemImitationObservable observable) {
         this.route = route;
-        this.stations = new ArrayList<>();
-        this.busObservers = new ArrayList<>();
-        this.stationObservers = new ArrayList<>();
         parseArcStation();
         linkTo(observable);
-        scheduleManager.createSchedule(this);
+        SCHEDULE_MANAGER.create(this);
     }
 
-    public static RouteDecorator of(Route route, SystemImitationObservable observable, ScheduleManager scheduleManager) {
-        return new RouteDecorator(route, observable, scheduleManager);
+    public static RouteDecorator of(Route route, SystemImitationObservable observable) {
+        return new RouteDecorator(route, observable);
     }
 
     @Override
@@ -85,7 +86,7 @@ public class RouteDecorator implements RouteTransportPublic {
     }
 
     //Use from generation schedule and from defend duplicate station and bus
-    public void linkTo(SystemImitationObservable observable) {
+    private void linkTo(SystemImitationObservable observable) {
         getStations().
                 forEach(station -> stationObservers.add((StationObserver) observable.register(StationObserver.of(station, this))));
         route.getBuses()

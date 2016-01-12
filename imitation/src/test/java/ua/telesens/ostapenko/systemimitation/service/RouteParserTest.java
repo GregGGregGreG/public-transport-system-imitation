@@ -31,8 +31,8 @@ public class RouteParserTest {
         RouteParser parser = new RouteParser();
         RouteList target = parser.fromXML(parser.toXML(source, file));
         BusSystemImitation imitation = new BusSystemImitation(target, STARTING, END);
-        BusSystemImitationStatistic busSystemImitationStatistic = BusSystemImitationStatistic.of(imitation);
-        busSystemImitationStatistic.execute().show();
+//        BusSystemImitationStatistic busSystemImitationStatistic = BusSystemImitationStatistic.of(imitation);
+//        busSystemImitationStatistic.execute();
         TestCase.assertEquals(source, target);
     }
 

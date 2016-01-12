@@ -24,7 +24,7 @@ public class ScheduleManager {
     // FIXME: 05.01.16 BADDDDDDDDDDDDDDDDDDDd
     // FIXME: 05.01.16 BADDDDDDDDDDDDDDDDDDDd
     // FIXME: 04.01.16 Bad algorithm!!!!!!!!!!!!!!!
-    public void createSchedule(RouteDecorator route) {
+    public void create(RouteDecorator route) {
         LocalTime starting;
         LocalTime time;
         LocalTime ruleEndTime;

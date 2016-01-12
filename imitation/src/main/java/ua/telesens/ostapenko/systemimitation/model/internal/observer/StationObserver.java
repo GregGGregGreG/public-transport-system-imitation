@@ -9,7 +9,10 @@ import ua.telesens.ostapenko.systemimitation.model.internal.*;
 import ua.telesens.ostapenko.systemimitation.service.PassengerGenerator;
 
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
@@ -17,24 +20,23 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * @since 14.12.15
  */
 @Slf4j
-@EqualsAndHashCode(exclude = {"passengers", "routes", "countPassenger", "lostPassenger", "lazyPassenger"})
+@EqualsAndHashCode(exclude = {"passengers", "routes", "countPassenger", "lazyPassenger","passengerGenerator"})
 public class StationObserver implements SystemImitationObserver, PassengerObservable {
 
+    @Getter
     private final Station station;
-    private Map<RouteDecorator, Map<RouteDirection, ConcurrentLinkedDeque<Passenger>>> passengers = Collections.emptyMap();
+    private Map<RouteDecorator, Map<RouteDirection, ConcurrentLinkedDeque<Passenger>>> passengers = new HashMap<>();
     @Getter
     private PassengerGenerator passengerGenerator;
     //Use from optimize process generation passenger
     @Getter
-    private List<RouteDecorator> routes = Collections.emptyList();
-    private long countPassenger;
-    private long lostPassenger;
-    private long lazyPassenger;
+    private List<RouteDecorator> routes = new ArrayList<>();
+    private int lazyPassenger;
+    @Getter
+    private int countPassenger;
 
     private StationObserver(Station station, RouteDecorator route) {
         this.station = station;
-        this.routes = new ArrayList<>();
-        this.passengers = new HashMap<>();
         this.registerRoute(route);
         this.passengerGenerator = new PassengerGenerator(this);
     }
@@ -84,7 +86,6 @@ public class StationObserver implements SystemImitationObserver, PassengerObserv
 
     public void clean() {
         passengers.forEach((route, quePassenger) -> quePassenger.forEach((direction, que) -> que.clear()));
-        lostPassenger += countPassenger;
         countPassenger = 0;
         log.debug(String.format("%-12s%-20s", station.getName(), "Remove All Passenger"));
     }
@@ -103,19 +104,7 @@ public class StationObserver implements SystemImitationObserver, PassengerObserv
         return String.valueOf(station);
     }
 
-    private long getCountPassenger() {
-        return countPassenger;
-    }
-
-    public Station getStation() {
-        return station;
-    }
-
-    public long getLostPassenger() {
-        return lostPassenger;
-    }
-
-    public long getLazyPassenger() {
+    public int getLazyPassenger() {
         return lazyPassenger;
     }
 
@@ -125,14 +114,15 @@ public class StationObserver implements SystemImitationObserver, PassengerObserv
     }
 
     private void notifyAllPassenger(RouteDirection direction, ConcurrentLinkedDeque<Passenger> passengers) {
-        passengers.stream().parallel().forEach(passenger -> removeLazy(passengers, passenger.updateTimer()));
-    }
-
-    private void removeLazy(ConcurrentLinkedDeque<Passenger> passengers, Passenger passenger) {
-        if (passenger.isGone()) {
-            passengers.remove(passenger);
-            lazyPassenger++;
-            countPassenger--;
-        }
+        passengers
+                .forEach(passenger -> {
+                    passenger.updateTimer();
+                    if (passenger.isGone()) {
+                        log.info(String.valueOf(passenger));
+                        passengers.remove(passenger);
+                        lazyPassenger++;
+                        countPassenger--;
+                    }
+                });
     }
 }

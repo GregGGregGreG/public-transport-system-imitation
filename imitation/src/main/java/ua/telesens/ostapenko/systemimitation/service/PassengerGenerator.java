@@ -9,6 +9,9 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.IntStream;
 
+import static ua.telesens.ostapenko.systemimitation.service.BusSystemImitation.MAX_TIME_PASSENGER_WAITING;
+import static ua.telesens.ostapenko.systemimitation.service.BusSystemImitation.MIN_TIME_PASSENGER_WAITING;
+
 /**
  * @author root
  * @since 08.01.16
@@ -16,19 +19,15 @@ import java.util.stream.IntStream;
 @Slf4j
 public class PassengerGenerator {
 
-    private static final int MIN_TIME_WAITING = 15;
-    private static final int MAX_TIME_WAITING = 40;
     private final StationObserver observer;
     @Getter
-    private Map<DayType, List<PassengerGenerationSchedule>> schedule = Collections.emptyMap();
-    private List<RouteDecorator> routes = Collections.emptyList();
-    private Random random;
+    private Map<DayType, List<PassengerGenerationSchedule>> schedule = new HashMap<>();
+    private List<RouteDecorator> routes;
+    private Random random = new Random();
 
     public PassengerGenerator(StationObserver observer) {
         this.observer = observer;
         this.routes = observer.getRoutes();
-        this.schedule = new HashMap<>();
-        this.random = new Random();
         createSchedule();
     }
 
@@ -57,7 +56,11 @@ public class PassengerGenerator {
                 .findFirst()
                 .get();
 
-        int randTimeWait = random.ints(MIN_TIME_WAITING, MAX_TIME_WAITING).findFirst().getAsInt();
+        int randTimeWait = random
+                .ints(MIN_TIME_PASSENGER_WAITING, MAX_TIME_PASSENGER_WAITING)
+                .findFirst()
+                .getAsInt();
+
         LocalTime waiting = LocalTime.of(0, 0).plusMinutes(randTimeWait);
 
         Passenger passenger = Passenger.of(route, direction, stationFinal, waiting);
@@ -81,7 +84,6 @@ public class PassengerGenerator {
         List<PassengerGenerationSchedule> result = new ArrayList<>();
         rules.getPassengerGenerationRules()
                 .stream()
-                .parallel()
                 .forEach(rule -> result.add(PassengerGenerationSchedule.of(rule)));
         schedule.put(dayType, result);
     }

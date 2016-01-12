@@ -16,7 +16,7 @@ import java.util.UUID;
 @Getter
 @EqualsAndHashCode
 @RequiredArgsConstructor(staticName = "of")
-@ToString(exclude = {"uuid", "rules"})
+@ToString(exclude = {"rules"})
 public class Station {
 
     private UUID uuid = UUID.randomUUID();
