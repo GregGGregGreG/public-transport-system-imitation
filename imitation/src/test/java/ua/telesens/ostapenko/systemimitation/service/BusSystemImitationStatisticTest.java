@@ -26,8 +26,21 @@ public class BusSystemImitationStatisticTest {
 
     @Test
     public void execute() throws Exception {
-//        BusSystemImitation imitation = new BusSystemImitation(source, STARTING, END);
-//        BusSystemImitationStatistic statistic = BusSystemImitationStatistic.of(imitation);
-//        statistic.execute();
+        BusSystemImitation imitation = new BusSystemImitation(source, STARTING, END);
+        BusSystemImitationStatistic statistic = BusSystemImitationStatistic.of(imitation);
+        statistic.execute();
+    }
+
+    @Test
+    public void toJSON() throws Exception {
+        BusSystemImitation imitation = new BusSystemImitation(source, STARTING, END);
+        BusSystemImitationStatistic statistic = BusSystemImitationStatistic.of(imitation);
+        statistic.execute().toJSON();
+    }
+    @Test
+    public void toXML() throws Exception {
+        BusSystemImitation imitation = new BusSystemImitation(source, STARTING, END);
+        BusSystemImitationStatistic statistic = BusSystemImitationStatistic.of(imitation);
+        statistic.execute().toXML();
     }
 }

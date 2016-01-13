@@ -6,7 +6,6 @@ import org.junit.Test;
 import ua.telesens.ostapenko.systemimitation.model.internal.RouteList;
 import ua.telesens.ostapenko.systemimitation.util.RouteGenerator;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.time.Month;
 
@@ -27,19 +26,20 @@ public class RouteParserTest {
 
     @Test
     public void fromXML() throws Exception {
-        File file = new File("route.xml");
-        RouteParser parser = new RouteParser();
-        RouteList target = parser.fromXML(parser.toXML(source, file));
+        RouteList target = RouteParser.fromXML(RouteParser.toXML(source));
+//        RouteList target = RouteParser.fromXML(new File("data/rout_2016-01-12T15:47:23.017Z.xml"));
         BusSystemImitation imitation = new BusSystemImitation(target, STARTING, END);
-//        BusSystemImitationStatistic busSystemImitationStatistic = BusSystemImitationStatistic.of(imitation);
-//        busSystemImitationStatistic.execute();
+        BusSystemImitationStatistic busSystemImitationStatistic = BusSystemImitationStatistic.of(imitation);
+        busSystemImitationStatistic.execute();
         TestCase.assertEquals(source, target);
     }
 
     @Test
     public void toXML() throws Exception {
-        File file = new File("route.xml");
-        RouteParser parser = new RouteParser();
-        parser.toXML(source, file);
+        RouteParser.toXML(source);
+    }
+    @Test
+    public void toJSON() throws Exception {
+        RouteParser.toJSON(source);
     }
 }

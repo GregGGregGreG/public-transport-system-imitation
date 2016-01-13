@@ -9,4 +9,6 @@ public interface DAOFactory {
 
     LogStationDAO getLogStationDAO();
 
+    ReportDAO getReportDAO();
+
 }

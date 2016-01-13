@@ -7,8 +7,6 @@ import lombok.Getter;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Map;
 
 /**
  * @author root
@@ -20,16 +18,12 @@ import java.util.Map;
 @XStreamAlias("systemImitationReport")
 public class Report {
 
-    private final LocalDateTime starting;
-    private final LocalDateTime end;
+    private final LocalDateTime startImitation;
+    private final LocalDateTime endImitation;
     private final Duration duration;
     private final int routes;
     private final int stations;
     private final int buses;
-    @XStreamAlias("minStartGenerationPassenger")
-    private final Map<DayType, LocalTime> startDay;
-    @XStreamAlias("maxEndGenerationPassenger")
-    private final Map<DayType, LocalTime> endDay;
     private final int busAvgCapacity;
     private final int numberTrips;
     private final int transportedPassenger;

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import ua.telesens.ostapenko.systemimitation.dao.DAOFactory;
 import ua.telesens.ostapenko.systemimitation.dao.LogBusDAO;
 import ua.telesens.ostapenko.systemimitation.dao.LogStationDAO;
+import ua.telesens.ostapenko.systemimitation.dao.ReportDAO;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -20,6 +21,13 @@ public class MySQlDAOFactory extends JdbcDaoSupport implements DAOFactory {
     @Autowired
     private DataSource dataSource;
 
+    public MySQlDAOFactory() {
+    }
+
+    public MySQlDAOFactory(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
     @PostConstruct
     private void initialize() {
         setDataSource(dataSource);
@@ -33,5 +41,10 @@ public class MySQlDAOFactory extends JdbcDaoSupport implements DAOFactory {
     @Override
     public LogStationDAO getLogStationDAO() {
         return new MySqlLogStationDao(getJdbcTemplate());
+    }
+
+    @Override
+    public ReportDAO getReportDAO() {
+        return new MySqlReportDao(getJdbcTemplate());
     }
 }

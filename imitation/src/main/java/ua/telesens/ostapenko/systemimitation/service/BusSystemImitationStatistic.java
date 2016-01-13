@@ -46,20 +46,22 @@ public class BusSystemImitationStatistic {
 
     private Report createReport() {
         return Report.builder()
-                .starting(systemImitation.getStarting())
-                .end(systemImitation.getEnd())
-                .duration(Duration.between(systemImitation.getStarting(), systemImitation.getEnd()))
+                .startImitation(systemImitation.getStarting())
+                .endImitation(systemImitation.getEnd())
+                .duration(getDurationImitation())
                 .routes(systemImitation.getRoutes().size())
                 .buses(systemImitation.getBuses().size())
                 .stations(systemImitation.getStations().size())
-                .endDay(systemImitation.getEndDay())
-                .startDay(systemImitation.getStartDay())
                 .busAvgCapacity((int) getAvgCapacityBus().getAsDouble())
                 .numberTrips(getNumberTrips())
                 .transportedPassenger(getAllPassengerTransportBus())
                 .busesPercentageOccupancy(getOccupancy())
                 .lazyPassenger(getLazyPassenger())
                 .build();
+    }
+
+    private Duration getDurationImitation() {
+        return Duration.between(systemImitation.getStarting(), systemImitation.getEnd());
     }
 
     private double getOccupancy() {

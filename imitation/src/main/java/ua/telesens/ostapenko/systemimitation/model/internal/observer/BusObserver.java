@@ -62,6 +62,7 @@ public class BusObserver implements SystemImitationObserver, BusStatistic {
             schedules
                     .get(event.getDayType())
                     .stream()
+                    .parallel()
                     .filter(scheduleLine -> event.getTime().toLocalTime().equals(scheduleLine.getTime()))
                     .forEach(scheduleLine -> updateEvent(scheduleLine, event));
         }
@@ -89,27 +90,28 @@ public class BusObserver implements SystemImitationObserver, BusStatistic {
     }
 
     private void createLog(StationObserver stationObserver, LocalDateTime time, StationType stationType, int download, int upload) {
-        imitationLogger.addLog(LogBus.builder()
-                .timeStop(time)
-                .stationUUID(stationObserver.getStation().getUuid())
-                .routeName(route.getName())
-                .busNUmber(bus.getNumber())
-                .download(download)
-                .upload(upload)
-                .count(currentCountPassengers)
-                .build());
+        if (Objects.nonNull(imitationLogger)) {
+            imitationLogger.addLog(LogBus.builder()
+                    .timeStop(time)
+                    .stationUUID(stationObserver.getStation().getUuid())
+                    .routeName(route.getName())
+                    .busNUmber(bus.getNumber())
+                    .download(download)
+                    .upload(upload)
+                    .count(currentCountPassengers)
+                    .build());
 
 
-        imitationLogger.addLog(LogStation.builder()
-                .timeStop(time)
-                .busUUID(bus.getUuid())
-                .routeName(route.getName())
-                .busNUmber(bus.getNumber())
-                .download(upload)
-                .upload(download)
-                .count(stationObserver.getCountPassenger())
-                .build());
-
+            imitationLogger.addLog(LogStation.builder()
+                    .timeStop(time)
+                    .busUUID(bus.getUuid())
+                    .routeName(route.getName())
+                    .busNUmber(bus.getNumber())
+                    .download(upload)
+                    .upload(download)
+                    .count(stationObserver.getCountPassenger())
+                    .build());
+        }
 
         log.debug(String.format("%-6s|%-6s|%-12s|%-12s|%-10s|%-10s|%-12s|%-15s",
                 time,

@@ -50,7 +50,6 @@ public class PassengerGenerationSchedule {
         return false;
     }
 
-
     private void fillSchedule() {
         int starting = this.start.toSecondOfDay();
         int end = this.end.toSecondOfDay();
@@ -61,10 +60,6 @@ public class PassengerGenerationSchedule {
         }
 
         this.end = Iterables.getLast(schedule);
-    }
-
-    public List<LocalTime> getSchedule() {
-        return schedule;
     }
 
     public int getPassengerGenerationCount(LocalTime time) {

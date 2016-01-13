@@ -28,6 +28,8 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
     public static final int MIN_TIME_PASSENGER_WAITING = 15;
     public static final int MAX_TIME_PASSENGER_WAITING = 40;
     public static final int IMITATION_STEP = 1;
+    private static final String FORMAT = "%-40s%-20s";
+
     private Logger logger;
     private RouteList source;
     private List<RouteDecorator> routes = new ArrayList<>();
@@ -51,6 +53,7 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
 
     @Override
     public void run() {
+        checkImitationLogger();
         while (hasNextStep()) {
             notifyAllObservers();
             nextStep();
@@ -91,8 +94,12 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
     public void notifyAllObservers() {
         ImitationEvent event = createEvent();
         stations
+                .stream()
+                .parallel()
                 .forEach(observer -> observer.updateEvent(event));
         buses
+                .stream()
+                .parallel()
                 .forEach(observer -> observer.updateEvent(event));
     }
 
@@ -172,5 +179,13 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         }
         observers.add(observer);
         return observer;
+    }
+
+    private void checkImitationLogger() {
+        if (Objects.isNull(logger)) {
+            log.info("Don't set imitation logger");
+        } else {
+            log.info(String.format(FORMAT, "Current imitation logger", logger));
+        }
     }
 }

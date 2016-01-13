@@ -22,7 +22,7 @@ public class MySqlLogBusDao implements LogBusDAO {
     public int insertLogBus(LogBus add) {
 
         String insertTableSQL = "INSERT INTO BUS_LOG"
-                + "(bus_number, " +
+                + "(bus_number," +
                 "time_stop," +
                 " station_uuid," +
                 " route_name," +

@@ -1,6 +1,7 @@
 package ua.telesens.ostapenko.systemimitation.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import ua.telesens.ostapenko.systemimitation.api.Logger;
 import ua.telesens.ostapenko.systemimitation.dao.DAOFactory;
 import ua.telesens.ostapenko.systemimitation.model.internal.LogBus;
@@ -11,6 +12,7 @@ import ua.telesens.ostapenko.systemimitation.model.internal.LogStation;
  * @since 12.01.16
  */
 @RequiredArgsConstructor(staticName = "of")
+@ToString
 public class LoggerDB implements Logger {
 
     private final DAOFactory daoFactory;
