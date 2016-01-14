@@ -25,6 +25,7 @@ public class StationObserver implements SystemImitationObserver, PassengerObserv
 
     @Getter
     private final Station station;
+    //Use optimization find que passenger
     private Map<RouteDecorator, Map<RouteDirection, ConcurrentLinkedDeque<Passenger>>> passengers = new HashMap<>();
     @Getter
     private PassengerGenerator passengerGenerator;
