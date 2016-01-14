@@ -1,5 +1,6 @@
 package ua.telesens.ostapenko.systemimitation.model.internal;
 
+import lombok.extern.slf4j.Slf4j;
 import ua.telesens.ostapenko.systemimitation.api.decorator.RouteTransportPublic;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObservable;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.BusObserver;
@@ -10,12 +11,13 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * @author root
  * @since 29.12.15
  */
+@Slf4j
 public class RouteDecorator implements RouteTransportPublic {
 
     private static final ScheduleManager SCHEDULE_MANAGER = new ScheduleManager();
@@ -61,7 +63,7 @@ public class RouteDecorator implements RouteTransportPublic {
     }
 
     @Override
-    public Map<DayType, RouteTrafficRuleList> getRules() {
+    public Set<RouteTrafficRuleList> getRules() {
         return route.getRules();
     }
 
@@ -94,7 +96,9 @@ public class RouteDecorator implements RouteTransportPublic {
     }
 
     private void parseArcStation() {
-        List<RouteArc> arcs = (List<RouteArc>) getArcList();
+        List<RouteArc> arcs = new ArrayList<>(getArcList());
+        log.debug(String.format("%-40s%-80s", "Parse route arc", arcs));
+
         int size = arcs.size();
         for (int i = 0; i < size; i++) {
             stations.add(arcs.get(i).getStart());
@@ -102,6 +106,7 @@ public class RouteDecorator implements RouteTransportPublic {
                 stations.add(arcs.get(i).getEnd());
             }
         }
+        log.debug(String.format("%-40s%-80s", "Init station", stations));
     }
 
     @Override

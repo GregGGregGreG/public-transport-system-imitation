@@ -25,7 +25,7 @@ public class BusSystemImitationTest {
 
     @Test
     public void run() throws Exception {
-//        BusSystemImitation imitation = new BusSystemImitation(source, STARTING, END);
+        BusSystemImitation imitation = new BusSystemImitation(source, STARTING, END);
     }
 
 }

@@ -4,9 +4,9 @@ import ua.telesens.ostapenko.systemimitation.model.internal.*;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import static ua.telesens.ostapenko.systemimitation.model.internal.DayType.HOLIDAY;
 import static ua.telesens.ostapenko.systemimitation.model.internal.DayType.WORKDAY;
@@ -39,9 +39,9 @@ public class RouteGenerator {
         holidayRulesOfGagarina.add(PassengerGenerationRule.of(
                 4, LocalTime.of(6, 0), LocalTime.of(22, 17), LocalTime.of(0, 16))
         );
-        Map<DayType, PassengerGenerationRuleList> rulesGagarina = new HashMap<>();
-        rulesGagarina.put(WORKDAY, PassengerGenerationRuleList.of(workDayRulesOfGagarina));
-        rulesGagarina.put(HOLIDAY, PassengerGenerationRuleList.of(holidayRulesOfGagarina));
+        Set<PassengerGenerationRuleList> rulesGagarina = new HashSet<>();
+        rulesGagarina.add(PassengerGenerationRuleList.of(WORKDAY, workDayRulesOfGagarina));
+        rulesGagarina.add(PassengerGenerationRuleList.of(HOLIDAY, holidayRulesOfGagarina));
         Station gagarina = Station.of("Gagarina", rulesGagarina);
 
         /////////-------------------------------
@@ -66,9 +66,9 @@ public class RouteGenerator {
         holidayRulesOfNovoselevka.add(PassengerGenerationRule.of(
                 3, LocalTime.of(6, 0), LocalTime.of(22, 0), LocalTime.of(0, 15))
         );
-        Map<DayType, PassengerGenerationRuleList> rulesNovoselevka = new HashMap<>();
-        rulesNovoselevka.put(WORKDAY, PassengerGenerationRuleList.of(workDayRulesOfNovoselevka));
-        rulesNovoselevka.put(HOLIDAY, PassengerGenerationRuleList.of(holidayRulesOfNovoselevka));
+        Set<PassengerGenerationRuleList> rulesNovoselevka = new HashSet<>();
+        rulesNovoselevka.add(PassengerGenerationRuleList.of(WORKDAY, workDayRulesOfNovoselevka));
+        rulesNovoselevka.add(PassengerGenerationRuleList.of(HOLIDAY, holidayRulesOfNovoselevka));
         Station novoselevka = Station.of("Novoselevka", rulesNovoselevka);
 
         /////////-------------------------------
@@ -93,20 +93,20 @@ public class RouteGenerator {
         holidayRulesOfDerchprom.add(PassengerGenerationRule.of(
                 3, LocalTime.of(6, 0), LocalTime.of(22, 0), LocalTime.of(0, 15))
         );
-        Map<DayType, PassengerGenerationRuleList> rulesDerchprom = new HashMap<>();
-        rulesDerchprom.put(WORKDAY, PassengerGenerationRuleList.of(workDayRulesOfDerchprom));
-        rulesDerchprom.put(HOLIDAY, PassengerGenerationRuleList.of(holidayRulesOfDerchprom));
+        Set<PassengerGenerationRuleList> rulesDerchprom = new HashSet<>();
+        rulesDerchprom.add(PassengerGenerationRuleList.of(WORKDAY, workDayRulesOfDerchprom));
+        rulesDerchprom.add(PassengerGenerationRuleList.of(HOLIDAY, holidayRulesOfDerchprom));
         Station derchprom = Station.of("Derchprom", rulesDerchprom);
 
-        ////-------------------------------------------- Create Arc list>>>>>>
-        List<RouteArc> arcs = new ArrayList<>();
+        ////-------------------------------------------- Create Arc Set>>>>>>
+        Set<RouteArc> arcs = new HashSet<>();
         arcs.add(RouteArc.of(gagarina, novoselevka, LocalTime.of(0, 18)));
         arcs.add(RouteArc.of(novoselevka, derchprom, LocalTime.of(0, 5)));
-        ///------------------------------------------  Create Bus List >>>>>>
+        ///------------------------------------------  Create Bus Set >>>>>>
         Bus busOne = Bus.of(832, 45);
         Bus busTwo = Bus.of(52, 45);
         Bus busThre = Bus.of(2668, 45);
-        List<Bus> buses = new ArrayList<>();
+        Set<Bus> buses = new HashSet<>();
         buses.add(busOne);
         buses.add(busTwo);
         buses.add(busThre);
@@ -123,9 +123,9 @@ public class RouteGenerator {
         holiDayTrafficRules.add(RouteTrafficRule.of(1, 3, LocalTime.of(0, 18), LocalTime.of(0, 45)));
         holiDayTrafficRules.add(RouteTrafficRule.of(2, 5, LocalTime.of(0, 15), LocalTime.of(0, 40)));
 
-        Map<DayType, RouteTrafficRuleList> trafficRules = new HashMap<>();
-        trafficRules.put(WORKDAY, RouteTrafficRuleList.of(workDayTrafficRules));
-        trafficRules.put(HOLIDAY, RouteTrafficRuleList.of(holiDayTrafficRules));
+        Set<RouteTrafficRuleList> trafficRules = new HashSet<>();
+        trafficRules.add(RouteTrafficRuleList.of(WORKDAY, workDayTrafficRules));
+        trafficRules.add(RouteTrafficRuleList.of(HOLIDAY, holiDayTrafficRules));
 
         Route route = Route.of(
                 "232",

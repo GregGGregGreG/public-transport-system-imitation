@@ -28,9 +28,9 @@ public class RouteParserTest {
     public void fromXML() throws Exception {
         RouteList target = RouteParser.fromXML(RouteParser.toXML(source));
 //        RouteList target = RouteParser.fromXML(new File("data/rout_2016-01-12T15:47:23.017Z.xml"));
-        BusSystemImitation imitation = new BusSystemImitation(target, STARTING, END);
-        BusSystemImitationStatistic busSystemImitationStatistic = BusSystemImitationStatistic.of(imitation);
-        busSystemImitationStatistic.execute();
+//        BusSystemImitation imitation = new BusSystemImitation(target, STARTING, END);
+//        BusSystemImitationStatistic busSystemImitationStatistic = BusSystemImitationStatistic.of(imitation);
+//        busSystemImitationStatistic.execute();
         TestCase.assertEquals(source, target);
     }
 

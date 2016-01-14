@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author root
@@ -15,11 +14,11 @@ import java.util.UUID;
  */
 @Getter
 @RequiredArgsConstructor(staticName = "of")
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "routeTrafficRules")
 @XStreamAlias("trafficRules")
 public class RouteTrafficRuleList {
 
-    private UUID uuid = UUID.randomUUID();
+    private final DayType dayType;
     @XStreamImplicit(itemFieldName = "trafficRule")
     private final List<RouteTrafficRule> routeTrafficRules;
 

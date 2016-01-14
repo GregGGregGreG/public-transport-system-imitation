@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -22,6 +22,6 @@ public class Station {
     private UUID uuid = UUID.randomUUID();
     private final String name;
     @XStreamAlias("stationPassengerGenerationRules")
-    private final Map<DayType, PassengerGenerationRuleList> rules;
+    private final Set<PassengerGenerationRuleList> rules;
 
 }

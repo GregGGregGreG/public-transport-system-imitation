@@ -80,11 +80,11 @@ public class PassengerGenerator {
         observer.getStation().getRules().forEach(this::handlerRule);
     }
 
-    private void handlerRule(DayType dayType, PassengerGenerationRuleList rules) {
+    private void handlerRule(PassengerGenerationRuleList rules) {
         List<PassengerGenerationSchedule> result = new ArrayList<>();
         rules.getPassengerGenerationRules()
                 .stream()
                 .forEach(rule -> result.add(PassengerGenerationSchedule.of(rule)));
-        schedule.put(dayType, result);
+        schedule.put(rules.getDayType(), result);
     }
 }

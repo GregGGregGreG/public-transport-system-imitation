@@ -14,10 +14,11 @@ import java.util.List;
  */
 @Getter
 @RequiredArgsConstructor(staticName = "of")
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "passengerGenerationRules")
 @XStreamAlias("passengerGenerationRules")
 public class PassengerGenerationRuleList {
 
+    private final DayType dayType;
     @XStreamImplicit
     private final List<PassengerGenerationRule> passengerGenerationRules;
 }

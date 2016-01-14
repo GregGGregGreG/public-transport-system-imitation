@@ -1,10 +1,13 @@
 package ua.telesens.ostapenko.systemimitation.api.decorator;
 
-import ua.telesens.ostapenko.systemimitation.model.internal.*;
+import ua.telesens.ostapenko.systemimitation.model.internal.Bus;
+import ua.telesens.ostapenko.systemimitation.model.internal.RouteArc;
+import ua.telesens.ostapenko.systemimitation.model.internal.RouteTrafficRuleList;
+import ua.telesens.ostapenko.systemimitation.model.internal.RouteType;
 
 import java.time.LocalTime;
 import java.util.Collection;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * @author root
@@ -22,6 +25,6 @@ public interface RouteTransportPublic {
 
     LocalTime getStarting();
 
-    Map<DayType, RouteTrafficRuleList> getRules();
+    Set<RouteTrafficRuleList> getRules();
 
 }

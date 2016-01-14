@@ -44,9 +44,9 @@ public class Application {
         MySQlDAOFactory mySQlDAOFactory = context.getBean(MySQlDAOFactory.class);
         LoggerDB loggerDB = LoggerDB.of(mySQlDAOFactory);
         ReportDAO reportDAO = mySQlDAOFactory.getReportDAO();
-        BusSystemImitationStatistic busSystemImitation = context.getBean(BusSystemImitationStatistic.class);
-        busSystemImitation.setLogger(loggerDB);
-        busSystemImitation.execute()
+        BusSystemImitationStatistic imitationStatistic = context.getBean(BusSystemImitationStatistic.class);
+        imitationStatistic.setLogger(loggerDB);
+        imitationStatistic.execute()
                 .show()
                 .toDB(reportDAO)
                 .toJSON()

@@ -8,8 +8,7 @@ import lombok.ToString;
 import ua.telesens.ostapenko.systemimitation.api.decorator.RouteTransportPublic;
 
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -28,10 +27,10 @@ public class Route implements RouteTransportPublic {
     private final RouteType type;
     private final double price;
     @XStreamAlias("arcs")
-    private final List<RouteArc> arcList;
-    private final List<Bus> buses;
+    private final Set<RouteArc> arcList;
+    private final Set<Bus> buses;
     private final LocalTime starting;
     @XStreamAlias("routeTrafficRules")
-    private final Map<DayType, RouteTrafficRuleList> rules;
+    private final Set<RouteTrafficRuleList> rules;
 
 }
