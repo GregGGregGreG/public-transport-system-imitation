@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * @since 14.12.15
  */
 @Slf4j
-@EqualsAndHashCode(exclude = {"passengers", "routes", "countPassenger", "lazyPassenger","passengerGenerator"})
+@EqualsAndHashCode(exclude = {"passengers", "routes", "countPassenger", "lazyPassenger", "passengerGenerator"})
 public class StationObserver implements SystemImitationObserver, PassengerObservable {
 
     @Getter

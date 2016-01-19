@@ -3,8 +3,6 @@ package ua.telesens.ostapenko.systemimitation.api;
 import ua.telesens.ostapenko.systemimitation.dao.ReportDAO;
 import ua.telesens.ostapenko.systemimitation.model.internal.Report;
 
-import java.io.IOException;
-
 /**
  * @author root
  * @since 06.01.16
@@ -13,11 +11,11 @@ public interface ReportManager {
 
     ReportManager show();
 
-    ReportManager toXML() throws IOException;
+    ReportManager toXML(XMLReportConverter converter);
 
-    ReportManager toJSON() throws IOException;
+    ReportManager toJSON();
 
-    ReportManager toDB(ReportDAO reportDAO) throws IOException;
+    ReportManager toDB(ReportDAO reportDAO) ;
 
     Report get();
 }

@@ -24,7 +24,6 @@ import java.util.*;
 @EqualsAndHashCode
 public class BusSystemImitation implements SystemImitation, SystemImitationObservable {
 
-    //    private final Logger LOGGER_IMITATION;
     public static final int MIN_TIME_PASSENGER_WAITING = 15;
     public static final int MAX_TIME_PASSENGER_WAITING = 40;
     public static final int IMITATION_STEP = 1;

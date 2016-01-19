@@ -1,25 +1,15 @@
 package ua.telesens.ostapenko.systemimitation.service;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.extended.NamedMapConverter;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import ua.telesens.ostapenko.systemimitation.api.ReportManager;
+import ua.telesens.ostapenko.systemimitation.api.XMLReportConverter;
 import ua.telesens.ostapenko.systemimitation.dao.ReportDAO;
-import ua.telesens.ostapenko.systemimitation.model.internal.DayType;
 import ua.telesens.ostapenko.systemimitation.model.internal.Report;
-import ua.telesens.ostapenko.systemimitation.xstream.converters.DurationConverter;
-import ua.telesens.ostapenko.systemimitation.xstream.converters.LocaleDateTimeConverter;
-import ua.telesens.ostapenko.systemimitation.xstream.converters.LocaleTimeConverter;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalTime;
+import java.util.Objects;
 
 /**
  * @author root
@@ -52,54 +42,38 @@ public class ReportManagerImpl implements ReportManager {
     }
 
     @Override
-    public ReportManager toXML() throws IOException {
-        log.info("Export report to XML");
-
-        XStream xStream = new XStream();
-        String name = "imitation/report/report_" + Instant.now() + ".xml";
-        File file = new File(name);
-
-        xStream.processAnnotations(Report.class);
-        xStream.setMode(XStream.NO_REFERENCES);
-        xStream.registerConverter(new LocaleDateTimeConverter());
-        xStream.registerConverter(new LocaleTimeConverter());
-        xStream.registerConverter(new DurationConverter());
-        xStream.registerConverter(new NamedMapConverter(xStream.getMapper(),
-                "val",
-                "dayType", DayType.class,
-                "time", LocalTime.class));
-        log.info("\n" + xStream.toXML(data));
-        xStream.toXML(data, new FileWriter(file));
-        log.info(String.format(FORMAT, "Path to XML file report", file.getAbsolutePath()));
+    public ReportManager toXML(XMLReportConverter converter) {
+        Objects.requireNonNull(converter, "report cannot be null");
+        converter.toXML(data);
         return this;
     }
 
     @Override
-    public ReportManager toJSON() throws IOException {
-        log.info("Export report to JSON");
-
-        XStream xStream = new XStream(new JsonHierarchicalStreamDriver());
-        String name = "imitation/report/report_" + Instant.now() + ".json";
-        File file = new File(name);
-
-        xStream.processAnnotations(Report.class);
-        xStream.setMode(XStream.NO_REFERENCES);
-        xStream.registerConverter(new LocaleDateTimeConverter());
-        xStream.registerConverter(new LocaleTimeConverter());
-        xStream.registerConverter(new DurationConverter());
-        xStream.registerConverter(new NamedMapConverter(xStream.getMapper(),
-                "val",
-                "dayType", DayType.class,
-                "time", LocalTime.class));
-        log.info("\n" + xStream.toXML(data));
-        xStream.toXML(data, new FileWriter(file));
-        log.info(String.format(FORMAT, "Path to JSON file report", file.getAbsolutePath()));
+    public ReportManager toJSON() {
+//        log.info("Export report toXML JSON");
+//
+//        XStream xStream = new XStream(new JsonHierarchicalStreamDriver());
+//        String name = "imitation/report/report_" + Instant.now() + ".json";
+//        File file = new File(name);
+//
+//        xStream.processAnnotations(Report.class);
+//        xStream.setMode(XStream.NO_REFERENCES);
+//        xStream.registerConverter(new LocaleDateTimeConverter());
+//        xStream.registerConverter(new LocaleTimeConverter());
+//        xStream.registerConverter(new DurationConverter());
+//        xStream.registerConverter(new NamedMapConverter(xStream.getMapper(),
+//                "val",
+//                "dayType", DayType.class,
+//                "time", LocalTime.class));
+//        log.info("\n" + xStream.toXML(data));
+//        xStream.toXML(data, new FileWriter(file));
+//        log.info(String.format(FORMAT, "Path toXML JSON file report", file.getAbsolutePath()));
         return this;
     }
 
     @Override
-    public ReportManager toDB(ReportDAO dao) throws IOException {
-        log.info("Export report to DB");
+    public ReportManager toDB(ReportDAO dao)  {
+        log.info("Export report toXML DB");
         dao.insertReport(data);
         return this;
     }

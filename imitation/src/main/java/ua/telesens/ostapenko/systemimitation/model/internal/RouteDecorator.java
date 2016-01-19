@@ -10,8 +10,9 @@ import ua.telesens.ostapenko.systemimitation.service.ScheduleManager;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author root
@@ -63,16 +64,16 @@ public class RouteDecorator implements RouteTransportPublic {
     }
 
     @Override
-    public Set<RouteTrafficRuleList> getRules() {
+    public List<RouteTrafficRuleList> getRules() {
         return route.getRules();
     }
 
     public Collection<Station> getStations() {
-        return stations;
+        return Collections.unmodifiableCollection(stations);
     }
 
     public Collection<BusObserver> getBusObservers() {
-        return busObservers;
+        return Collections.unmodifiableCollection(busObservers);
     }
 
     public void setBusObservers(Collection<BusObserver> busObservers) {
@@ -80,7 +81,7 @@ public class RouteDecorator implements RouteTransportPublic {
     }
 
     public Collection<StationObserver> getStationObservers() {
-        return stationObservers;
+        return Collections.unmodifiableCollection(stationObservers);
     }
 
     public void setStationObservers(Collection<StationObserver> stationObservers) {
@@ -96,7 +97,10 @@ public class RouteDecorator implements RouteTransportPublic {
     }
 
     private void parseArcStation() {
-        List<RouteArc> arcs = new ArrayList<>(getArcList());
+        List<RouteArc> arcs = getArcList().stream()
+                .sorted((o1, o2) -> Integer.compare(o1.getNumber(), o2.getNumber()))
+                .collect(Collectors.toList());
+
         log.debug(String.format("%-40s%-80s", "Parse route arc", arcs));
 
         int size = arcs.size();
@@ -106,6 +110,7 @@ public class RouteDecorator implements RouteTransportPublic {
                 stations.add(arcs.get(i).getEnd());
             }
         }
+
         log.debug(String.format("%-40s%-80s", "Init station", stations));
     }
 

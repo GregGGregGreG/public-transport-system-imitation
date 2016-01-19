@@ -4,9 +4,7 @@ import com.google.common.collect.Iterables;
 import lombok.Getter;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author root
@@ -21,7 +19,6 @@ public class PassengerGenerationSchedule {
     private LocalTime end;
     @Getter
     private final LocalTime interval;
-    @Getter
     private List<LocalTime> schedule = new ArrayList<>();
 
     private PassengerGenerationSchedule(PassengerGenerationRule rule) {
@@ -67,5 +64,9 @@ public class PassengerGenerationSchedule {
             throw new IllegalArgumentException();
         }
         return count;
+    }
+
+    public List<LocalTime> getSchedule() {
+        return Collections.unmodifiableList(schedule);
     }
 }

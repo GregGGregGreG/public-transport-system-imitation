@@ -1,17 +1,13 @@
 package ua.telesens.ostapenko;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import ua.telesens.ostapenko.conf.PersistenceContext;
-import ua.telesens.ostapenko.systemimitation.dao.ReportDAO;
-import ua.telesens.ostapenko.systemimitation.dao.impl.mysql.MySQlDAOFactory;
-import ua.telesens.ostapenko.systemimitation.model.internal.RouteList;
-import ua.telesens.ostapenko.systemimitation.service.BusSystemImitation;
-import ua.telesens.ostapenko.systemimitation.service.BusSystemImitationStatistic;
-import ua.telesens.ostapenko.systemimitation.service.LoggerDB;
-import ua.telesens.ostapenko.systemimitation.service.RouteParser;
+import ua.telesens.ostapenko.systemimitation.ImitationRunner;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -24,32 +20,15 @@ import java.time.Month;
 @ComponentScan(basePackages = {"ua.telesens.ostapenko"})
 @Import(PersistenceContext.class)
 public class Application {
-    private static final LocalDateTime STARTING = LocalDateTime.of(2015, Month.NOVEMBER, 12, 6, 0);
-    private static final LocalDateTime END = LocalDateTime.of(2015, Month.NOVEMBER, 15, 23, 50);
-
-    @Bean
-    public BusSystemImitationStatistic systemImitation() throws IOException {
-        return BusSystemImitationStatistic.of(new BusSystemImitation(
-                getSource(),
-                STARTING,
-                END));
-    }
-
-    private RouteList getSource() {
-        return RouteParser.fromXML(new File("imitation/data/rout_2016-01-12T15:47:23.017Z.xml"));
-    }
 
     public static void main(String[] args) throws IOException {
         ApplicationContext context = new AnnotationConfigApplicationContext(Application.class);
-        MySQlDAOFactory mySQlDAOFactory = context.getBean(MySQlDAOFactory.class);
-        LoggerDB loggerDB = LoggerDB.of(mySQlDAOFactory);
-        ReportDAO reportDAO = mySQlDAOFactory.getReportDAO();
-        BusSystemImitationStatistic imitationStatistic = context.getBean(BusSystemImitationStatistic.class);
-        imitationStatistic.setLogger(loggerDB);
-        imitationStatistic.execute()
-                .show()
-                .toDB(reportDAO)
-                .toJSON()
-                .toXML();
+        ImitationRunner runner = context.getBean(ImitationRunner.class);
+
+        LocalDateTime STARTING = LocalDateTime.of(2015, Month.NOVEMBER, 12, 6, 0);
+        LocalDateTime END = LocalDateTime.of(2015, Month.NOVEMBER, 15, 23, 50);
+        runner.run("imitation/data/rout_2016-01-15T11:08:31.471Z.xml", STARTING, END);
+//        runner.run("imitation/data/rout_2016-01-14T13:05:23.851Z.xml", STARTING, END);
+//        runner.run("imitation/data/rout_2016-01-16T19:23:48.535Z.xml", STARTING, END);
     }
 }

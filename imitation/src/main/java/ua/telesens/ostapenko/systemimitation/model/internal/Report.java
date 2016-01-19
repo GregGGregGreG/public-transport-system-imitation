@@ -28,7 +28,6 @@ public class Report {
     private final int numberTrips;
     private final int transportedPassenger;
     private final double busesPercentageOccupancy;
-    private final long lostPassenger;
     private final long lazyPassenger;
 
 }

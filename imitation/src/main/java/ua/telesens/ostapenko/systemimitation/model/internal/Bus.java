@@ -5,7 +5,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import ua.telesens.ostapenko.systemimitation.validation.RouteListStep1;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 /**
@@ -14,13 +18,20 @@ import java.util.UUID;
  */
 @Getter
 @RequiredArgsConstructor(staticName = "of")
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"uuid","capacity"})
 @ToString(exclude = {"uuid", "capacity"})
 @XStreamAlias("bus")
 public class Bus {
 
+    @NotNull(groups = RouteListStep1.class)
     private UUID uuid = UUID.randomUUID();
+
+    @Min(value = 0, groups = RouteListStep1.class)
+    @Max(value = 10000, groups = RouteListStep1.class)
     private final int number;
+
+    @Min(value = 0, groups = RouteListStep1.class)
+    @Max(value = 70, groups = RouteListStep1.class)
     private final int capacity;
 
 }

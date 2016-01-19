@@ -6,7 +6,7 @@ package ua.telesens.ostapenko.systemimitation.api;
  */
 public interface BusStatistic {
 
-    int getPassengers();
+    int getTransportedPassengers();
 
     int getNumberTrips();
 }

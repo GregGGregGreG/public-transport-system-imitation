@@ -88,7 +88,7 @@ public class BusSystemImitationStatistic {
 
     private int getAllPassengerTransportBus() {
         return systemImitation.getBuses().stream()
-                .mapToInt(BusObserver::getPassengers)
+                .mapToInt(BusObserver::getTransportedPassengers)
                 .sum();
     }
 

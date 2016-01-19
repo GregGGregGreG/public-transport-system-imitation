@@ -7,7 +7,7 @@ import ua.telesens.ostapenko.systemimitation.model.internal.RouteType;
 
 import java.time.LocalTime;
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author root
@@ -25,6 +25,6 @@ public interface RouteTransportPublic {
 
     LocalTime getStarting();
 
-    Set<RouteTrafficRuleList> getRules();
+    List<RouteTrafficRuleList> getRules();
 
 }

@@ -1,5 +1,6 @@
 package ua.telesens.ostapenko.systemimitation.model.internal.observer;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import static ua.telesens.ostapenko.systemimitation.model.internal.StationType.F
  * @author root
  * @since 14.12.15
  */
+@EqualsAndHashCode(exclude = {"imitationLogger","passengers","schedules","transportedPassenger","numberTrips","currentCountPassengers","route"})
 @Slf4j
 public class BusObserver implements SystemImitationObserver, BusStatistic {
 
@@ -62,7 +64,6 @@ public class BusObserver implements SystemImitationObserver, BusStatistic {
             schedules
                     .get(event.getDayType())
                     .stream()
-                    .parallel()
                     .filter(scheduleLine -> event.getTime().toLocalTime().equals(scheduleLine.getTime()))
                     .forEach(scheduleLine -> updateEvent(scheduleLine, event));
         }
@@ -180,7 +181,7 @@ public class BusObserver implements SystemImitationObserver, BusStatistic {
     // Statistic operation
 
     @Override
-    public int getPassengers() {
+    public int getTransportedPassengers() {
         return transportedPassenger;
     }
 

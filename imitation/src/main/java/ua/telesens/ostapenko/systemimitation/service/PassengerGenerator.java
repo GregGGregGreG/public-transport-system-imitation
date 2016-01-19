@@ -16,6 +16,7 @@ import static ua.telesens.ostapenko.systemimitation.service.BusSystemImitation.M
  * @author root
  * @since 08.01.16
  */
+// FIXME: 16.01.16 Generate schedule from route
 @Slf4j
 public class PassengerGenerator {
 
@@ -26,6 +27,7 @@ public class PassengerGenerator {
     private Random random = new Random();
 
     public PassengerGenerator(StationObserver observer) {
+        log.debug(String.format("%-30s%-30s", "Init passenger generator from", observer.getStation().getName()));
         this.observer = observer;
         this.routes = observer.getRoutes();
         createSchedule();
