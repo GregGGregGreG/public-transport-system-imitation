@@ -47,7 +47,7 @@ public class StationObserver implements SystemImitationObserver, PassengerObserv
     }
 
     public void addPassenger(List<Passenger> passengers) throws IllegalStateException {
-        passengers.stream().parallel().forEach(this::addPassenger);
+        passengers.stream().forEach(this::addPassenger);
     }
 
     public void addPassenger(Passenger passenger) throws IllegalStateException {
