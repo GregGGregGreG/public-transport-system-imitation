@@ -23,12 +23,13 @@ import java.util.*;
 @Getter
 @EqualsAndHashCode
 public class BusSystemImitation implements SystemImitation, SystemImitationObservable {
-
+    // use from calculation end day
     public static final int MIN_TIME_PASSENGER_WAITING = 15;
     public static final int MAX_TIME_PASSENGER_WAITING = 40;
     public static final int IMITATION_STEP = 1;
     private static final String FORMAT = "%-40s%-20s";
 
+    private ProgressBar pb;
     private Logger logger;
     private RouteList source;
     private List<RouteDecorator> routes = new ArrayList<>();
@@ -45,6 +46,7 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         this.starting = starting;
         this.imitationTime = starting;
         this.end = end;
+        this.pb = new ProgressBar(starting, end, IMITATION_STEP);
         initRoutes();
         initEndDay();
         initStartDay();
@@ -53,22 +55,11 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
     @Override
     public void run() {
         checkImitationLogger();
-        String format = "%-30s%-20s";
-
-        if (log.isInfoEnabled()) {
-            System.out.println("---- Imitation information ----");
-            System.out.println(String.format(format, "Start imitation", starting.toString()));
-            System.out.println(String.format(format, "Stop imitation", end.toString()));
-        }
+        pb.start();
         while (hasNextStep()) {
-            if (log.isInfoEnabled()) {
-                System.out.print(String.format(format, "\rProgress imitation time", imitationTime.toString()));
-            }
+            pb.step(imitationTime);
             notifyAllObservers();
             nextStep();
-        }
-        if (log.isInfoEnabled()) {
-            System.out.println("\n");
         }
     }
 
@@ -104,12 +95,8 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
     @Override
     public void notifyAllObservers() {
         ImitationEvent event = createEvent();
-        stations
-                .stream()
-                .forEach(observer -> observer.updateEvent(event));
-        buses
-                .stream()
-                .forEach(observer -> observer.updateEvent(event));
+        stations.forEach(observer -> observer.updateEvent(event));
+        buses.forEach(observer -> observer.updateEvent(event));
     }
 
     public void setLogger(Logger logger) {
@@ -198,3 +185,4 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         }
     }
 }
+
