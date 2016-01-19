@@ -53,7 +53,13 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
     @Override
     public void run() {
         checkImitationLogger();
+        if (log.isInfoEnabled()) {
+            System.out.print("\n---- Imitation information ----\n");
+        }
         while (hasNextStep()) {
+            if (log.isInfoEnabled()) {
+                System.out.print("\rProgress imitation time ---> " + imitationTime.toString());
+            }
             notifyAllObservers();
             nextStep();
         }
@@ -66,7 +72,6 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
 
     @Override
     public void pause() {
-
     }
 
     @Override
