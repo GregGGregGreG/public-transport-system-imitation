@@ -52,6 +52,17 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
+         <!--Expression Language (EL)-->
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+            <version>2.2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>2.2.4</version>
+        </dependency>
         <!-- Commons Database Connection Pool-->
         <dependency>
             <groupId>commons-dbcp</groupId>
@@ -92,7 +103,11 @@
             <version>1.4.8</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>4.1.7.RELEASE</version>
+        </dependency>
 
         <dependency>
             <groupId>mysql</groupId>

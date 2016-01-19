@@ -29,19 +29,18 @@ CREATE TABLE STATION_LOG (
 );
 
 CREATE TABLE REPORT_LOG (
-  id_report_log            INT(5)     NOT NULL AUTO_INCREMENT,
-  startImitation           DATETIME   NOT NULL,
-  endImitation             DATETIME   NOT NULL,
+  id_report_log            INT(5)      NOT NULL AUTO_INCREMENT,
+  startImitation           DATETIME    NOT NULL,
+  endImitation             DATETIME    NOT NULL,
   duration                 VARCHAR(10) NOT NULL,
-  routes                   INT(5)     NOT NULL,
-  stations                 INT(5)     NOT NULL,
-  busAvgCapacity           INT(5)     NOT NULL,
-  numberTrips              INT(5)     NOT NULL,
-  transportedPassenger     INT(5)     NOT NULL,
-  busesPercentageOccupancy DOUBLE     NOT NULL,
-  lostPassenger            INT(5)     NOT NULL,
-  lazyPassenger            INT(5)     NOT NULL,
-  create_date_time         DATETIME   NOT NULL,
+  routes                   INT(5)      NOT NULL,
+  stations                 INT(5)      NOT NULL,
+  busAvgCapacity           INT(5)      NOT NULL,
+  numberTrips              INT(5)      NOT NULL,
+  transportedPassenger     INT(5)      NOT NULL,
+  busesPercentageOccupancy DOUBLE      NOT NULL,
+  lazyPassenger            INT(5)      NOT NULL,
+  create_date_time         DATETIME    NOT NULL,
   PRIMARY KEY (id_report_log)
 );
 

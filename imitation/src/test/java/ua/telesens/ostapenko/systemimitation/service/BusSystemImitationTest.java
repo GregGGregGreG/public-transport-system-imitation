@@ -3,7 +3,7 @@ package ua.telesens.ostapenko.systemimitation.service;
 import org.junit.Before;
 import org.junit.Test;
 import ua.telesens.ostapenko.systemimitation.model.internal.RouteList;
-import ua.telesens.ostapenko.systemimitation.util.RouteGenerator;
+import ua.telesens.ostapenko.systemimitation.util.RouteListGenerator;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -20,7 +20,7 @@ public class BusSystemImitationTest {
 
     @Before
     public void setUp() throws Exception {
-        source = RouteGenerator.get();
+        source = RouteListGenerator.get();
     }
 
     @Test
