@@ -53,15 +53,22 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
     @Override
     public void run() {
         checkImitationLogger();
+        String format = "%-30s%-20s";
+
         if (log.isInfoEnabled()) {
-            System.out.print("\n---- Imitation information ----\n");
+            System.out.println("---- Imitation information ----");
+            System.out.println(String.format(format, "Start imitation", starting.toString()));
+            System.out.println(String.format(format, "Stop imitation", end.toString()));
         }
         while (hasNextStep()) {
             if (log.isInfoEnabled()) {
-                System.out.print("\rProgress imitation time ---> " + imitationTime.toString());
+                System.out.print(String.format(format, "\rProgress imitation time", imitationTime.toString()));
             }
             notifyAllObservers();
             nextStep();
+        }
+        if (log.isInfoEnabled()) {
+            System.out.println("\n");
         }
     }
 
@@ -99,11 +106,9 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         ImitationEvent event = createEvent();
         stations
                 .stream()
-                .parallel()
                 .forEach(observer -> observer.updateEvent(event));
         buses
                 .stream()
-                .parallel()
                 .forEach(observer -> observer.updateEvent(event));
     }
 
