@@ -1,6 +1,5 @@
 package ua.telesens.ostapenko.systemimitation.service;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ua.telesens.ostapenko.systemimitation.model.internal.*;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.StationObserver;
@@ -16,12 +15,10 @@ import static ua.telesens.ostapenko.systemimitation.service.BusSystemImitation.M
  * @author root
  * @since 08.01.16
  */
-// FIXME: 16.01.16 Generate schedule from route
 @Slf4j
 public class PassengerGenerator {
 
     private final StationObserver observer;
-    @Getter
     private Map<DayType, List<PassengerGenerationSchedule>> schedule = new HashMap<>();
     private List<RouteDecorator> routes;
     private Random random = new Random();
@@ -88,5 +85,9 @@ public class PassengerGenerator {
                 .stream()
                 .forEach(rule -> result.add(PassengerGenerationSchedule.of(rule)));
         schedule.put(rules.getDayType(), result);
+    }
+
+    public Map<DayType, List<PassengerGenerationSchedule>> getSchedule() {
+        return Collections.unmodifiableMap(schedule);
     }
 }
