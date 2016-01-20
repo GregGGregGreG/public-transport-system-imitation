@@ -105,12 +105,6 @@ public class StationObserver implements SystemImitationObserver, PassengerObserv
                 });
     }
 
-    public void clean() {
-        passengers.forEach((route, quePassenger) -> quePassenger.forEach((direction, que) -> que.clear()));
-        countPassengers = 0;
-        log.debug(String.format("%-12s%-20s", station.getName(), "Remove All Passenger"));
-    }
-
 
     // Handler event
 
