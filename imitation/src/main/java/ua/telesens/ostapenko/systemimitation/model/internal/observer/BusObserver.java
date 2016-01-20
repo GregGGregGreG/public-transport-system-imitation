@@ -129,9 +129,7 @@ public class BusObserver implements SystemImitationObserver, BusStatistic {
     // Route register
 
     private void registerRoute() {
-        route.getStationObservers()
-                .parallelStream()
-                .forEach(station -> passengers.put(station, new ArrayDeque<>()));
+        route.getStationObservers().forEach(station -> passengers.put(station, new ArrayDeque<>()));
     }
 
 
