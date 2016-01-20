@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ua.telesens.ostapenko.systemimitation.api.Logger;
+import ua.telesens.ostapenko.systemimitation.api.ProgressBar;
 import ua.telesens.ostapenko.systemimitation.api.SystemImitation;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObservable;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObserver;
@@ -20,11 +21,11 @@ import java.util.*;
  * @since 10.12.15
  */
 @Slf4j
-@Getter
 @EqualsAndHashCode
 public class BusSystemImitation implements SystemImitation, SystemImitationObservable {
-    // use from calculation end day
+
     public static final int MIN_TIME_PASSENGER_WAITING = 15;
+    // use from calculation end day
     public static final int MAX_TIME_PASSENGER_WAITING = 40;
     public static final int IMITATION_STEP = 1;
     private static final String FORMAT = "%-40s%-20s";
@@ -36,7 +37,9 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
     private List<StationObserver> stations = new ArrayList<>();
     private List<BusObserver> buses = new ArrayList<>();
     private LocalDateTime imitationTime;
+    @Getter
     private LocalDateTime starting;
+    @Getter
     private LocalDateTime end;
     private Map<DayType, LocalTime> endDay = new HashMap<>();
     private Map<DayType, LocalTime> startDay = new HashMap<>();
@@ -46,7 +49,7 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         this.starting = starting;
         this.imitationTime = starting;
         this.end = end;
-        this.pb = new ProgressBar(starting, end, IMITATION_STEP);
+        this.pb = new ProgressBarImpl(starting, end);
         initRoutes();
         initEndDay();
         initStartDay();
@@ -104,8 +107,20 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         buses.forEach(busObserver -> busObserver.setImitationLogger(logger));
     }
 
+    public List<RouteDecorator> getRoutes() {
+        return Collections.unmodifiableList(routes);
+    }
+
+    public List<StationObserver> getStations() {
+        return Collections.unmodifiableList(stations);
+    }
+
+    public List<BusObserver> getBuses() {
+        return Collections.unmodifiableList(buses);
+    }
+
     private boolean hasNextStep() {
-        return imitationTime.isBefore(end);
+        return !imitationTime.isAfter(end);
     }
 
     private void nextStep() {
