@@ -3,16 +3,14 @@ package ua.telesens.ostapenko.systemimitation.model.internal.observer;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import ua.telesens.ostapenko.systemimitation.api.StationStatistic;
 import ua.telesens.ostapenko.systemimitation.api.observer.PassengerObservable;
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObserver;
 import ua.telesens.ostapenko.systemimitation.model.internal.*;
 import ua.telesens.ostapenko.systemimitation.service.PassengerGenerator;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
@@ -20,37 +18,45 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * @since 14.12.15
  */
 @Slf4j
-@EqualsAndHashCode(exclude = {"passengers", "routes", "countPassenger", "lazyPassenger", "passengerGenerator"})
-public class StationObserver implements SystemImitationObserver, PassengerObservable {
+@EqualsAndHashCode(exclude = {"passengers", "routes", "countPassengers", "lazyPassengers", "generator"})
+public class StationObserver implements SystemImitationObserver, PassengerObservable, StationStatistic {
 
     @Getter
     private final Station station;
     //Use optimization find que passenger
     private Map<RouteDecorator, Map<RouteDirection, ConcurrentLinkedDeque<Passenger>>> passengers = new HashMap<>();
     @Getter
-    private PassengerGenerator passengerGenerator;
+    private PassengerGenerator generator;
     //Use from optimize process generation passenger
-    @Getter
     private List<RouteDecorator> routes = new ArrayList<>();
-    private int lazyPassenger;
     @Getter
-    private int countPassenger;
+    private int countPassengers;
+    // Statistic source
+    @Getter
+    private int lazyPassengers;
 
     private StationObserver(Station station, RouteDecorator route) {
         this.station = station;
         this.registerRoute(route);
-        this.passengerGenerator = new PassengerGenerator(this);
+        this.generator = new PassengerGenerator(this);
     }
 
     public static StationObserver of(Station station, RouteDecorator route) {
+        Objects.requireNonNull(station);
+        Objects.requireNonNull(route);
         return new StationObserver(station, route);
     }
 
-    public void addPassenger(List<Passenger> passengers) throws IllegalStateException {
+
+    // Operations from passenger
+
+    public void addPassenger(List<Passenger> passengers) {
+        Objects.requireNonNull(passengers);
         passengers.forEach(this::addPassenger);
     }
 
-    public void addPassenger(Passenger passenger) throws IllegalStateException {
+    public void addPassenger(Passenger passenger) {
+        Objects.requireNonNull(passenger);
         if (passenger.getStation().equals(this)) {
             throw new IllegalStateException(station + "\tNot valid\t" + passenger);
         }
@@ -62,51 +68,23 @@ public class StationObserver implements SystemImitationObserver, PassengerObserv
                 //Add passenger toStation que
                 .add(passenger);
         //Increment count passenger
-        countPassenger++;
+        countPassengers++;
     }
 
     public Passenger getPassenger(RouteDecorator route, RouteDirection direction) {
+        Objects.requireNonNull(route);
+        Objects.requireNonNull(direction);
         if (hasNextPassenger(route, direction)) {
-            countPassenger--;
+            countPassengers--;
             return this.passengers.get(route).get(direction).poll();
         }
         throw new IllegalStateException();
     }
 
     public boolean hasNextPassenger(RouteDecorator route, RouteDirection direction) {
+        Objects.requireNonNull(route);
+        Objects.requireNonNull(direction);
         return !passengers.get(route).get(direction).isEmpty();
-    }
-
-    @Override
-    public void updateEvent(ImitationEvent event) {
-        DayType dayType = event.getDayType();
-        LocalTime time = event.getTime().toLocalTime();
-        notifyAllPassenger();
-        addPassenger(passengerGenerator.execute(dayType, time));
-    }
-
-    public void clean() {
-        passengers.forEach((route, quePassenger) -> quePassenger.forEach((direction, que) -> que.clear()));
-        countPassenger = 0;
-        log.debug(String.format("%-12s%-20s", station.getName(), "Remove All Passenger"));
-    }
-
-    public void registerRoute(RouteDecorator route) {
-        if (routes.contains(route)) {
-            return;
-        }
-        //Use from optimize generation passenger
-        routes.add(route);
-        passengers.put(route, route.getType().getQue());
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(station);
-    }
-
-    public int getLazyPassenger() {
-        return lazyPassenger;
     }
 
     @Override
@@ -121,11 +99,56 @@ public class StationObserver implements SystemImitationObserver, PassengerObserv
                     if (passenger.isGone()) {
                         log.info(String.valueOf(passenger));
                         passengers.remove(passenger);
-                        lazyPassenger++;
-                        countPassenger--;
+                        lazyPassengers++;
+                        countPassengers--;
                     }
                 });
     }
 
+    public void clean() {
+        passengers.forEach((route, quePassenger) -> quePassenger.forEach((direction, que) -> que.clear()));
+        countPassengers = 0;
+        log.debug(String.format("%-12s%-20s", station.getName(), "Remove All Passenger"));
+    }
 
+
+    // Handler event
+
+    @Override
+    public void updateEvent(ImitationEvent event) {
+        Objects.requireNonNull(event);
+        DayType dayType = event.getDayType();
+        LocalTime time = event.getTime().toLocalTime();
+        //Check lazy passenger
+        notifyAllPassenger();
+        //Generation new passengers
+        addPassenger(generator.execute(dayType, time));
+    }
+
+
+    // Operations from route
+
+    public void registerRoute(RouteDecorator route) {
+        //Check route
+        Objects.requireNonNull(route);
+        if (routes.contains(route)) {
+            return;
+        }
+        // Use from optimize generation passenger
+        routes.add(route);
+        //Add route and specific que passenger from route
+        passengers.put(route, route.getType().getQue());
+    }
+
+    public List<RouteDecorator> getRoutes() {
+        return Collections.unmodifiableList(routes);
+    }
+
+
+    //  String conversion
+
+    @Override
+    public String toString() {
+        return String.valueOf(station);
+    }
 }
