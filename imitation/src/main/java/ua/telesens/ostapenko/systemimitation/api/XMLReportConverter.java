@@ -9,5 +9,5 @@ import ua.telesens.ostapenko.systemimitation.model.internal.Report;
  */
 public interface XMLReportConverter {
 
-    void toXML(Report report) throws SerialisationException;
+    void toXML(Report report, String path) throws SerialisationException;
 }

@@ -15,7 +15,6 @@ import ua.telesens.ostapenko.systemimitation.xstream.converters.LocaleTimeConver
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.Instant;
 import java.time.LocalTime;
 import java.util.Objects;
 
@@ -29,13 +28,13 @@ public class XStreamXMLReportConverter implements XMLReportConverter {
     private static final String FORMAT = "%-40s%-20s";
 
     @Override
-    public void toXML(Report report) throws SerialisationException {
+    public void toXML(Report report, String path) throws SerialisationException {
         log.info("Export report toXML XML");
         Objects.requireNonNull(report, "report cannot be null");
+        Objects.requireNonNull(report, "path cannot be null");
         try {
             XStream xStream = new XStream();
-            String name = "imitation/report/report_" + Instant.now() + ".xml";
-            File file = new File(name);
+            File file = new File(path);
 
             xStream.processAnnotations(Report.class);
             xStream.setMode(XStream.NO_REFERENCES);
