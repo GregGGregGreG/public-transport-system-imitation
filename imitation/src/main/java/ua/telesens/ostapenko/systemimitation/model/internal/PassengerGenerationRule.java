@@ -2,7 +2,7 @@ package ua.telesens.ostapenko.systemimitation.model.internal;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import lombok.*;
-import ua.telesens.ostapenko.systemimitation.validation.RouteListStep1;
+import ua.telesens.ostapenko.systemimitation.validation.ImitationSourceStep1;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -22,20 +22,20 @@ import java.util.UUID;
 @XStreamAlias("passengerGenerationRule")
 public class PassengerGenerationRule {
 
-    @NotNull(groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
     private UUID uuid = UUID.randomUUID();
 
-    @Min(value = 1, groups = RouteListStep1.class)
-    @Max(value = 1000, groups = RouteListStep1.class)
+    @Min(value = 1, groups = ImitationSourceStep1.class)
+    @Max(value = 1000, groups = ImitationSourceStep1.class)
     private final int count;
 
-    @NotNull(groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
     private final LocalTime start;
 
-    @NotNull(groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
     private final LocalTime end;
 
-    @NotNull(groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
     private final LocalTime interval;
 
 }

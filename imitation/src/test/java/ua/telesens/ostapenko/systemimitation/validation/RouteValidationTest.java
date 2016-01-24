@@ -29,7 +29,7 @@ public class RouteValidationTest {
     @Test
     public void checkRouteValidatorIsNull() {
         Route item = Route.of(null,null,0,null,null,null,null);
-        Set<ConstraintViolation<Route>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<Route>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         constraintViolations.forEach(System.out::println);
 
         assertEquals(6, constraintViolations.size());
@@ -42,7 +42,7 @@ public class RouteValidationTest {
     @Test
     public void checkRouteValidatorIsMin() {
         Route item = Route.of(null,null,-15,null,null,null,null);
-        Set<ConstraintViolation<Route>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<Route>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         assertEquals(7, constraintViolations.size());
         assertEquals(
                 "may not be null",

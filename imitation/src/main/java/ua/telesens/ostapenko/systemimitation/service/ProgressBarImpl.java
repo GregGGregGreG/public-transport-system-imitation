@@ -43,7 +43,7 @@ public class ProgressBarImpl implements ProgressBar {
 
     @Override
     public void start() {
-        if (log.isInfoEnabled()) {
+        if (!log.isDebugEnabled()) {
             last = 1;
             timer = LocalTime.now();
             showInfo();
@@ -58,7 +58,7 @@ public class ProgressBarImpl implements ProgressBar {
      */
     @Override
     public void step(LocalDateTime imitationTime) {
-        if (log.isInfoEnabled()) {
+        if (!log.isDebugEnabled()) {
             System.out.print(String.format(format, "\r" +
                     getProgressLine(imitationTime) +
                     getTimeInPercent(imitationTime) + "%",

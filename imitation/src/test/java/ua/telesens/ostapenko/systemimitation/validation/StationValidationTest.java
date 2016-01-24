@@ -29,7 +29,7 @@ public class StationValidationTest {
     @Test
     public void checkStationValidatorIsNull() {
         Station item = Station.of(null,null);
-        Set<ConstraintViolation<Station>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<Station>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         assertEquals(2, constraintViolations.size());
         assertEquals(
                 "may not be null",

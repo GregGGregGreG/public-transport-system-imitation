@@ -1,5 +1,6 @@
 package ua.telesens.ostapenko.systemimitation.api;
 
+import ua.telesens.ostapenko.systemimitation.model.internal.ImitationSource;
 import ua.telesens.ostapenko.systemimitation.model.internal.RouteList;
 
 import javax.validation.ValidationException;
@@ -11,5 +12,5 @@ import javax.validation.ValidationException;
  */
 public interface RouteListValidator {
 
-    void validate(RouteList routeList) throws ValidationException;
+    void validate(ImitationSource routeList) throws ValidationException;
 }

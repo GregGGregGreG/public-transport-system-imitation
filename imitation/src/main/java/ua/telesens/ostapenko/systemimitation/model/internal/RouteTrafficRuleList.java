@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import ua.telesens.ostapenko.systemimitation.validation.RouteListStep1;
+import ua.telesens.ostapenko.systemimitation.validation.ImitationSourceStep1;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -27,12 +27,12 @@ public class RouteTrafficRuleList {
     private static final int MIN_COUNT_RULE = 1;
     private static final int MAX_COUNT_RULE = 100;
 
-    @NotNull(groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
     private final DayType dayType;
 
     @XStreamImplicit(itemFieldName = "trafficRule")
-    @NotNull(groups = RouteListStep1.class)
-    @Size(min = MIN_COUNT_RULE, max = MAX_COUNT_RULE, groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
+    @Size(min = MIN_COUNT_RULE, max = MAX_COUNT_RULE, groups = ImitationSourceStep1.class)
     @Valid
     private final List<RouteTrafficRule> routeTrafficRules;
 

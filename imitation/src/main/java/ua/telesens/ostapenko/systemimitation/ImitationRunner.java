@@ -7,10 +7,8 @@ import ua.telesens.ostapenko.systemimitation.api.RouteListValidator;
 import ua.telesens.ostapenko.systemimitation.dao.ReportDAO;
 import ua.telesens.ostapenko.systemimitation.dao.impl.mysql.MySQlDAOFactory;
 import ua.telesens.ostapenko.systemimitation.exeption.ImitationException;
-import ua.telesens.ostapenko.systemimitation.model.internal.RouteList;
+import ua.telesens.ostapenko.systemimitation.model.internal.ImitationSource;
 import ua.telesens.ostapenko.systemimitation.service.*;
-
-import java.time.LocalDateTime;
 
 /**
  * @author root
@@ -21,28 +19,28 @@ import java.time.LocalDateTime;
 public class ImitationRunner {
 
     @Autowired
-    MySQlDAOFactory mySQlDAOFactory;
+    private MySQlDAOFactory mySQlDAOFactory;
 
-    public void run(String xml, LocalDateTime start, LocalDateTime end) {
+    public void run(String path) {
         try {
             log.info("Initialize imitation");
-            start(xml, start, end);
+            start(path);
         } catch (ImitationException e) {
-            log.debug(String.valueOf(e.getClass()), e);
-            log.error(e.getMessage());
+            log.error(String.valueOf(e.getClass()), e);
+            log.info(e.getMessage());
         }
     }
 
-    private void start(String xml, LocalDateTime start, LocalDateTime end) {
+    private void start(String path) {
         LoggerDB loggerDB = LoggerDB.of(mySQlDAOFactory);
         ReportDAO reportDAO = mySQlDAOFactory.getReportDAO();
 
-        RouteList routeList = RouteListParser.fromXML(xml, new XStreamXMLRouteListConverter());
+        ImitationSource source = ImitationSourceParser.fromXML(path, new XStreamXMLImitationSourceConverter());
         RouteListValidator validator = new HibernateValidator();
 
-        validator.validate(routeList);
+        validator.validate(source);
 
-        BusSystemImitation systemImitation = new BusSystemImitation(routeList, start, end);
+        BusSystemImitation systemImitation = new BusSystemImitation(source);
         BusSystemImitationStatistic imitationStatistic = BusSystemImitationStatistic.of(systemImitation);
 
         imitationStatistic.setLogger(loggerDB);

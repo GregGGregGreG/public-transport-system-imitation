@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import ua.telesens.ostapenko.systemimitation.validation.RouteListStep1;
+import ua.telesens.ostapenko.systemimitation.validation.ImitationSourceStep1;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -23,15 +23,15 @@ import java.util.UUID;
 @XStreamAlias("bus")
 public class Bus {
 
-    @NotNull(groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
     private UUID uuid = UUID.randomUUID();
 
-    @Min(value = 0, groups = RouteListStep1.class)
-    @Max(value = 10000, groups = RouteListStep1.class)
+    @Min(value = 0, groups = ImitationSourceStep1.class)
+    @Max(value = 10000, groups = ImitationSourceStep1.class)
     private final int number;
 
-    @Min(value = 0, groups = RouteListStep1.class)
-    @Max(value = 70, groups = RouteListStep1.class)
+    @Min(value = 0, groups = ImitationSourceStep1.class)
+    @Max(value = 70, groups = ImitationSourceStep1.class)
     private final int capacity;
 
 }

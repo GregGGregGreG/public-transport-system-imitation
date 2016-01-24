@@ -28,9 +28,17 @@ public class CheckPassengerRuleTimeValidator implements ConstraintValidator<Chec
             long min = LocalTime.of(3, 0).toNanoOfDay();
 
             if (start == end) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+                        .addPropertyNode("\n"+ rule)
+                        .addConstraintViolation();
                 return false;
             }
             if (start < end && end - start < min) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+                        .addPropertyNode("\n"+ rule)
+                        .addConstraintViolation();
                 return false;
             }
         }

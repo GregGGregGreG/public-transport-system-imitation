@@ -6,8 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import ua.telesens.ostapenko.systemimitation.validation.RouteListStep1;
-import ua.telesens.ostapenko.systemimitation.validation.RouteListStep2;
+import ua.telesens.ostapenko.systemimitation.validation.ImitationSourceStep1;
+import ua.telesens.ostapenko.systemimitation.validation.ImitationSourceStep2;
 import ua.telesens.ostapenko.systemimitation.validation.constraint.CheckRouteList;
 
 import javax.validation.Valid;
@@ -30,9 +30,9 @@ public class RouteList {
     private static final int MIN_COUNT_ROUTE = 1;
 
     @XStreamImplicit
-    @NotNull(groups = RouteListStep1.class)
-    @Size(min = MIN_COUNT_ROUTE, max = MAX_COUNT_ROUTE, groups = RouteListStep1.class)
-    @CheckRouteList(groups = RouteListStep2.class)
+    @NotNull(groups = ImitationSourceStep1.class)
+    @Size(min = MIN_COUNT_ROUTE, max = MAX_COUNT_ROUTE, groups = ImitationSourceStep1.class)
+    @CheckRouteList(groups = ImitationSourceStep2.class)
     @Valid
     private final List<Route> routes;
 }

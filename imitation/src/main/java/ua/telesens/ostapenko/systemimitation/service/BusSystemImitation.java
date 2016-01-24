@@ -10,8 +10,8 @@ import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObserva
 import ua.telesens.ostapenko.systemimitation.api.observer.SystemImitationObserver;
 import ua.telesens.ostapenko.systemimitation.model.internal.DayType;
 import ua.telesens.ostapenko.systemimitation.model.internal.ImitationEvent;
+import ua.telesens.ostapenko.systemimitation.model.internal.ImitationSource;
 import ua.telesens.ostapenko.systemimitation.model.internal.RouteDecorator;
-import ua.telesens.ostapenko.systemimitation.model.internal.RouteList;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.BusObserver;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.StationObserver;
 
@@ -29,15 +29,15 @@ import java.util.Objects;
 @EqualsAndHashCode
 public class BusSystemImitation implements SystemImitation, SystemImitationObservable {
 
-    public static final int MIN_TIME_PASSENGER_WAITING = 15;
-    // use from calculation end day
-    public static final int MAX_TIME_PASSENGER_WAITING = 120;
+    public static int minTimePassengerWaiting;
+    public static int maxTimePassengerWaiting;
+
     public static final int IMITATION_STEP = 1;
     private static final String FORMAT = "%-40s%-20s";
 
     private ProgressBar pb;
     private Logger logger;
-    private RouteList source;
+    private ImitationSource source;
     private List<RouteDecorator> routes = new ArrayList<>();
     private List<StationObserver> stations = new ArrayList<>();
     private List<BusObserver> buses = new ArrayList<>();
@@ -47,12 +47,14 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
     @Getter
     private LocalDateTime end;
 
-    public BusSystemImitation(RouteList source, LocalDateTime starting, LocalDateTime end) {
+    public BusSystemImitation(ImitationSource source) {
         this.source = source;
-        this.starting = starting;
+        this.starting = source.getStarting();
         this.imitationTime = starting;
-        this.end = end;
+        this.end = source.getEnd();
         this.pb = new ProgressBarImpl(starting, end);
+        minTimePassengerWaiting = source.getMinTimePassengerWaiting();
+        maxTimePassengerWaiting = source.getMaxTimePassengerWaiting();
         initRoutes();
     }
 
@@ -135,6 +137,7 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
 
     private void initRoutes() {
         source
+                .getRouteList()
                 .getRoutes()
                 .forEach(route -> this.routes.add(RouteDecorator.of(route, this)));
     }

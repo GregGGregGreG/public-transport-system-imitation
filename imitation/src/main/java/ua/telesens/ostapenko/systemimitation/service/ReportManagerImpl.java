@@ -4,11 +4,14 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import ua.telesens.ostapenko.systemimitation.api.ReportManager;
 import ua.telesens.ostapenko.systemimitation.api.XMLReportConverter;
 import ua.telesens.ostapenko.systemimitation.dao.ReportDAO;
 import ua.telesens.ostapenko.systemimitation.model.internal.Report;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -19,7 +22,16 @@ import java.util.Objects;
 @Getter
 @RequiredArgsConstructor(staticName = "of")
 @ToString
+@PropertySource("classpath:application.properties")
 public class ReportManagerImpl implements ReportManager {
+
+    private static final String XML = "xml";
+
+    @Value("#{environment['name.report.file']}")
+    private String PROPERTY_NAME_REPORT_FILE;
+
+    @Value("#{environment['path.report.folder']}")
+    private String PROPERTY_PATH_REPORT_FOLDER;
 
     private static final String FORMAT = "%-40s%-20s";
     private final Report data;
@@ -44,7 +56,10 @@ public class ReportManagerImpl implements ReportManager {
     @Override
     public ReportManager toXML(XMLReportConverter converter) {
         Objects.requireNonNull(converter, "report cannot be null");
-        converter.toXML(data);
+        String path = PROPERTY_PATH_REPORT_FOLDER + "/"
+                + PROPERTY_NAME_REPORT_FILE + "_" +
+                LocalDateTime.now() + "." + XML;
+        converter.toXML(data, path);
         return this;
     }
 
@@ -72,7 +87,7 @@ public class ReportManagerImpl implements ReportManager {
     }
 
     @Override
-    public ReportManager toDB(ReportDAO dao)  {
+    public ReportManager toDB(ReportDAO dao) {
         log.info("Export report toXML DB");
         dao.insertReport(data);
         return this;

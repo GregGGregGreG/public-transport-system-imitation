@@ -94,7 +94,7 @@ public class BusSystemImitationStatistic {
 
     private int getLazyPassenger() {
         return systemImitation.getStations().stream()
-                .mapToInt(StationObserver::getLazyPassenger)
+                .mapToInt(StationObserver::getLazyPassengers)
                 .sum();
     }
 }

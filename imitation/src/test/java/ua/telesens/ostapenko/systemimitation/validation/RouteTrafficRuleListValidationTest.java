@@ -28,7 +28,7 @@ public class RouteTrafficRuleListValidationTest {
     @Test
     public void checkRouteTrafficRuleListValidationIsNull() {
         RouteTrafficRuleList item = RouteTrafficRuleList.of(null, null);
-        Set<ConstraintViolation<RouteTrafficRuleList>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<RouteTrafficRuleList>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         constraintViolations.forEach(System.out::println);
         assertEquals(2, constraintViolations.size());
         constraintViolations.forEach(constraint -> assertEquals("may not be null", constraint.getMessage()));

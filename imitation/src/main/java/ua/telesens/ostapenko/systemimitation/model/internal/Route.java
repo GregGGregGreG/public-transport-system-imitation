@@ -7,10 +7,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 import ua.telesens.ostapenko.systemimitation.api.decorator.RouteTransportPublic;
-import ua.telesens.ostapenko.systemimitation.validation.RouteListStep1;
-import ua.telesens.ostapenko.systemimitation.validation.RouteListStep2;
+import ua.telesens.ostapenko.systemimitation.validation.ImitationSourceStep1;
+import ua.telesens.ostapenko.systemimitation.validation.ImitationSourceStep2;
 import ua.telesens.ostapenko.systemimitation.validation.constraint.CheckRouteArc;
 import ua.telesens.ostapenko.systemimitation.validation.constraint.RoutePrice;
+import ua.telesens.ostapenko.systemimitation.validation.constraint.rule.route.CheckRouteTrafficRuleListDuplicate;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -42,41 +43,42 @@ public class Route implements RouteTransportPublic {
     public static final int MAX_COUNT_RULE = 1000;
 
     @Getter
-    @NotNull(groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
     private UUID uuid = UUID.randomUUID();
 
     @Getter
-    @NotNull(groups = RouteListStep1.class)
-    @Length(min = MIN_NAME_LENGTH, max = MAX_NAME_LENGTH, groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
+    @Length(min = MIN_NAME_LENGTH, max = MAX_NAME_LENGTH, groups = ImitationSourceStep1.class)
     private final String name;
 
     @Getter
-    @NotNull(groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
     private final RouteType type;
 
     @Getter
-    @RoutePrice(min = MIN_PRICE, max = MAX_PRICE, groups = RouteListStep1.class)
+    @RoutePrice(min = MIN_PRICE, max = MAX_PRICE, groups = ImitationSourceStep1.class)
     private final double price;
 
     @XStreamAlias("arcs")
-    @NotNull(groups = RouteListStep1.class)
-    @Size(min = MIN_COUNT_ARC, max = MAX_COUNT_ARC, groups = RouteListStep1.class)
-    @CheckRouteArc(groups = RouteListStep2.class)
+    @NotNull(groups = ImitationSourceStep1.class)
+    @Size(min = MIN_COUNT_ARC, max = MAX_COUNT_ARC, groups = ImitationSourceStep1.class)
+    @CheckRouteArc(groups = ImitationSourceStep2.class)
     @Valid
     private final List<RouteArc> arcList;
 
-    @NotNull(groups = RouteListStep1.class)
-    @Size(min = MIN_COUNT_BUS, max = MAX_COUNT_BUS, groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
+    @Size(min = MIN_COUNT_BUS, max = MAX_COUNT_BUS, groups = ImitationSourceStep1.class)
     @Valid
     private final List<Bus> buses;
 
     @Getter
-    @NotNull(groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
     private final LocalTime starting;
 
     @XStreamAlias("routeTrafficRules")
-    @NotNull(groups = RouteListStep1.class)
-    @Size(min = MIN_COUNT_RULE, max = MAX_COUNT_RULE, groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
+    @Size(min = MIN_COUNT_RULE, max = MAX_COUNT_RULE, groups = ImitationSourceStep1.class)
+    @CheckRouteTrafficRuleListDuplicate(groups = ImitationSourceStep2.class)
     @Valid
     private final List<RouteTrafficRuleList> rules;
 

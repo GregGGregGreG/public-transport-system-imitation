@@ -56,7 +56,7 @@ public class StationObserver implements SystemImitationObserver, PassengerObserv
     }
 
     public void addPassenger(Passenger passenger) {
-        Objects.requireNonNull(passenger);
+        Objects.requireNonNull(passenger, "passenger can not nul");
         if (passenger.getStation().equals(this)) {
             throw new IllegalStateException(station + "\tNot valid\t" + passenger);
         }

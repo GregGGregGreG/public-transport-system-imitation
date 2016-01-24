@@ -1,5 +1,7 @@
 package ua.telesens.ostapenko;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
@@ -9,8 +11,6 @@ import ua.telesens.ostapenko.conf.PersistenceContext;
 import ua.telesens.ostapenko.systemimitation.ImitationRunner;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.Month;
 
 /**
  * @author root
@@ -19,16 +19,24 @@ import java.time.Month;
 @Configuration
 @ComponentScan(basePackages = {"ua.telesens.ostapenko"})
 @Import(PersistenceContext.class)
+
 public class Application {
 
-    public static void main(String[] args) throws IOException {
-        ApplicationContext context = new AnnotationConfigApplicationContext(Application.class);
-        ImitationRunner runner = context.getBean(ImitationRunner.class);
+    private static final String FATAL_ERROR_IN_CORE_OOPS = "Fatal error in core! OOPS";
 
-        LocalDateTime STARTING = LocalDateTime.of(2015, Month.NOVEMBER, 12, 6, 0);
-        LocalDateTime END = LocalDateTime.of(2015, Month.NOVEMBER, 15, 23, 50);
-        runner.run("imitation/data/rout_2016-01-15T11:08:31.471Z.xml", STARTING, END);
-//        runner.run("imitation/data/rout_2016-01-14T13:05:23.851Z.xml", STARTING, END);
-//        runner.run("imitation/data/rout_2016-01-16T19:23:48.535Z.xml", STARTING, END);
+    public static void main(String[] args) throws IOException {
+        new Bootstrap().run();
+
+        Logger log = LoggerFactory.getLogger(Application.class);
+
+        try {
+            ApplicationContext context = new AnnotationConfigApplicationContext(Application.class);
+            ImitationRunner runner = context.getBean(ImitationRunner.class);
+            String path = "/home/greg/Program Data/WorkDirectory/IdeaProjects/public-transport-system-imitation/imitation/data/rout_2016-01-21T09:03:16.254Z.xml";
+            runner.run(path);
+        } catch (Throwable e) {
+            log.error(String.valueOf(e.getClass()), e);
+            log.info(FATAL_ERROR_IN_CORE_OOPS);
+        }
     }
 }

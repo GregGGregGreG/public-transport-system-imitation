@@ -24,6 +24,11 @@ public class CheckPassengerRuleIntervalValidator implements ConstraintValidator<
     public boolean isValid(List<PassengerGenerationRule> value, ConstraintValidatorContext context) {
         for (PassengerGenerationRule rule : value) {
             if (rule.getInterval().isAfter(min)) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+                        .addPropertyNode("\n"+ rule)
+                        .addConstraintViolation();
+
                 return false;
             }
         }

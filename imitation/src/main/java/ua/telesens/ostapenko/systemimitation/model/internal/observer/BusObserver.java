@@ -18,7 +18,7 @@ import static ua.telesens.ostapenko.systemimitation.model.internal.StationType.F
  * @author root
  * @since 14.12.15
  */
-@EqualsAndHashCode(exclude = {"imitationLogger","passengers","schedules","transportedPassenger","numberTrips","currentCountPassengers","route"})
+@EqualsAndHashCode(exclude = {"imitationLogger", "passengers", "schedules", "transportedPassenger", "numberTrips", "currentCountPassengers", "route"})
 @Slf4j
 public class BusObserver implements SystemImitationObserver, BusStatistic {
 
@@ -56,7 +56,8 @@ public class BusObserver implements SystemImitationObserver, BusStatistic {
         }
     }
 
-    //Update event
+
+    //Handler event
 
     @Override
     public synchronized void updateEvent(ImitationEvent event) {
@@ -110,7 +111,7 @@ public class BusObserver implements SystemImitationObserver, BusStatistic {
                     .busNUmber(bus.getNumber())
                     .download(upload)
                     .upload(download)
-                    .count(stationObserver.getCountPassenger())
+                    .count(stationObserver.getCountPassengers())
                     .build());
         }
 

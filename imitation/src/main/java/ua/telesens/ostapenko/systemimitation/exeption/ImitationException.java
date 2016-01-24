@@ -6,32 +6,17 @@ package ua.telesens.ostapenko.systemimitation.exeption;
  */
 public class ImitationException extends RuntimeException {
 
-
-    private Throwable cause;
-
     public ImitationException() {
-        this("", null);
-
+        super();
     }
 
     public ImitationException(String message) {
-        this(message, null);
-
+        super(message);
     }
 
     public ImitationException(String message, Throwable cause) {
-        super(message + (cause == null ? "" : " : " + cause.getMessage()));
-        this.cause = cause;
-
+        super(message, cause);
     }
 
-    public ImitationException(Throwable cause) {
-        this("", cause);
 
-    }
-
-    @Override
-    public synchronized Throwable getCause() {
-        return cause;
-    }
 }

@@ -8,8 +8,7 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.IntStream;
 
-import static ua.telesens.ostapenko.systemimitation.service.BusSystemImitation.MAX_TIME_PASSENGER_WAITING;
-import static ua.telesens.ostapenko.systemimitation.service.BusSystemImitation.MIN_TIME_PASSENGER_WAITING;
+import static ua.telesens.ostapenko.systemimitation.service.BusSystemImitation.*;
 
 /**
  * @author root
@@ -54,9 +53,9 @@ public class PassengerGenerator {
                 .stream()
                 .findFirst()
                 .get();
-
+        // FIXME: 21.01.16 wrap generation passenger and generation passenger
         int randTimeWait = random
-                .ints(MIN_TIME_PASSENGER_WAITING, MAX_TIME_PASSENGER_WAITING)
+                .ints(minTimePassengerWaiting, maxTimePassengerWaiting)
                 .findFirst()
                 .getAsInt();
 
@@ -85,9 +84,5 @@ public class PassengerGenerator {
                 .stream()
                 .forEach(rule -> result.add(PassengerGenerationSchedule.of(rule)));
         schedule.put(rules.getDayType(), result);
-    }
-
-    public Map<DayType, List<PassengerGenerationSchedule>> getSchedule() {
-        return Collections.unmodifiableMap(schedule);
     }
 }

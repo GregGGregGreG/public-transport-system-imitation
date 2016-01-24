@@ -6,13 +6,14 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
-import ua.telesens.ostapenko.systemimitation.validation.RouteListStep1;
+import ua.telesens.ostapenko.systemimitation.validation.ImitationSourceStep1;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -30,21 +31,21 @@ public class Station {
     public static final int MAX_COUNT_RULES = 2;
 
     @Getter
-    @NotNull(groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
     private UUID uuid = UUID.randomUUID();
 
     @Getter
-    @NotNull(groups = RouteListStep1.class)
-    @Length(min = MIN_LENGTH_NAME, max = MAX_LENGTH_NAME, groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
+    @Length(min = MIN_LENGTH_NAME, max = MAX_LENGTH_NAME, groups = ImitationSourceStep1.class)
     private final String name;
 
     @XStreamAlias("stationPassengerGenerationRules")
-    @NotNull(groups = RouteListStep1.class)
-    @Size(min = MIN_COUNT_RULES, max = MAX_COUNT_RULES, groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
+    @Size(min = MIN_COUNT_RULES, max = MAX_COUNT_RULES, groups = ImitationSourceStep1.class)
     @Valid
     private final List<PassengerGenerationRuleList> rules;
 
     public List<PassengerGenerationRuleList> getRules() {
-        return new ArrayList<>(rules);
+        return Objects.isNull(rules) ? null : Collections.unmodifiableList(rules);
     }
 }

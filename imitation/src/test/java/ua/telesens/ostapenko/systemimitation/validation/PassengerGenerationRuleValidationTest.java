@@ -31,7 +31,7 @@ public class PassengerGenerationRuleValidationTest {
     @Test
     public void checkPassengerGenerationRuleIsNull() {
         PassengerGenerationRule item = PassengerGenerationRule.of(2, null, null, null);
-        Set<ConstraintViolation<PassengerGenerationRule>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<PassengerGenerationRule>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         constraintViolations.forEach(System.out::println);
 
         assertEquals(3, constraintViolations.size());
@@ -41,7 +41,7 @@ public class PassengerGenerationRuleValidationTest {
     @Test
     public void checkPassengerGenerationRuleMinCount() {
         PassengerGenerationRule item = PassengerGenerationRule.of(0, LocalTime.now(), LocalTime.now(), LocalTime.now());
-        Set<ConstraintViolation<PassengerGenerationRule>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<PassengerGenerationRule>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         constraintViolations.forEach(System.out::println);
 
         assertEquals(1, constraintViolations.size());
@@ -51,7 +51,7 @@ public class PassengerGenerationRuleValidationTest {
     @Test
     public void checkPassengerGenerationRuleMax() {
         PassengerGenerationRule item = PassengerGenerationRule.of(1001, LocalTime.now(), LocalTime.now(), LocalTime.now());
-        Set<ConstraintViolation<PassengerGenerationRule>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<PassengerGenerationRule>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         constraintViolations.forEach(System.out::println);
 
         assertEquals(1, constraintViolations.size());

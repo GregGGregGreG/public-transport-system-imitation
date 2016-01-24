@@ -14,7 +14,5 @@ public class DataBaseException extends ImitationException {
         super(message, cause);
     }
 
-    public DataBaseException(Throwable cause) {
-        super(cause);
-    }
+
 }

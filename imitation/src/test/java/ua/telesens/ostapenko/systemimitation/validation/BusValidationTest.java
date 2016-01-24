@@ -29,7 +29,7 @@ public class BusValidationTest {
     @Test
     public void checkBusValidatorMin() {
         Bus item = Bus.of(-1,-1);
-        Set<ConstraintViolation<Bus>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<Bus>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         constraintViolations.forEach(System.out::println);
 
         assertEquals(2, constraintViolations.size());

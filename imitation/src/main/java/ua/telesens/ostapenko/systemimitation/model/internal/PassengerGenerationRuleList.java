@@ -5,8 +5,8 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import ua.telesens.ostapenko.systemimitation.validation.RouteListStep1;
-import ua.telesens.ostapenko.systemimitation.validation.RouteListStep2;
+import ua.telesens.ostapenko.systemimitation.validation.ImitationSourceStep1;
+import ua.telesens.ostapenko.systemimitation.validation.ImitationSourceStep2;
 import ua.telesens.ostapenko.systemimitation.validation.constraint.rule.station.CheckPassengerRule;
 
 import javax.validation.Valid;
@@ -28,13 +28,13 @@ public class PassengerGenerationRuleList {
     public static final int MAX_COUNT_RULE = 100;
 
     @Getter
-    @NotNull(groups = RouteListStep1.class)
+    @NotNull(groups = ImitationSourceStep1.class)
     private final DayType dayType;
 
     @XStreamImplicit
-    @NotNull(groups = RouteListStep1.class)
-    @Size(min = MIN_COUNT_RULE, max = MAX_COUNT_RULE, groups = RouteListStep1.class)
-    @CheckPassengerRule(groups = RouteListStep2.class)
+    @NotNull(groups = ImitationSourceStep1.class)
+    @Size(min = MIN_COUNT_RULE, max = MAX_COUNT_RULE, groups = ImitationSourceStep1.class)
+    @CheckPassengerRule(groups = ImitationSourceStep2.class)
     @Valid
     private final List<PassengerGenerationRule> passengerGenerationRules;
 

@@ -61,12 +61,13 @@ public class XStreamXMLImitationSourceConverter implements XMLImitationSourceCon
     @Override
     public ImitationSource fromXML(String xml) {
         log.info("Parse imitation source XML to object");
-        Objects.requireNonNull(xml, "imitation source xml cannot be null");
-        ImitationSource source = null;
+        Objects.requireNonNull(xml, "Imitation source xml cannot be null");
+        ImitationSource source;
         try {
             XStream xStream = new XStream();
 
             xStream.processAnnotations(ImitationSource.class);
+
             xStream.registerConverter(new LocaleDateTimeConverter());
             xStream.registerConverter(new LocaleTimeConverter());
 
@@ -74,13 +75,15 @@ public class XStreamXMLImitationSourceConverter implements XMLImitationSourceCon
             log.debug(String.valueOf(source));
         } catch (ConversionException e) {
             SerialisationException exception =
-                    new SerialisationException("error parse imitation source XMl", e);
+                    new SerialisationException("Error parse imitation source XMl", e);
+
+
             exception.add("error", e.getShortMessage());
             exception.add("path", e.get("path"));
             exception.add("line number", e.get("line number"));
             throw exception;
         } catch (XStreamException e) {
-            throw new SerialisationException("error parse imitation source XMl", e);
+            throw new SerialisationException("Error parse imitation source XMl", e);
         }
         return source;
     }

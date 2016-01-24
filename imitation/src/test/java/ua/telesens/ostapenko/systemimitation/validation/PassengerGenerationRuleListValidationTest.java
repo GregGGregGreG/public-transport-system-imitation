@@ -35,7 +35,7 @@ public class PassengerGenerationRuleListValidationTest {
     @Test
     public void checkPassengerGenerationRuleListIsNull() {
         PassengerGenerationRuleList item = PassengerGenerationRuleList.of(null, null);
-        Set<ConstraintViolation<PassengerGenerationRuleList>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<PassengerGenerationRuleList>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         constraintViolations.forEach(System.out::println);
 
         assertEquals(2, constraintViolations.size());
@@ -63,7 +63,7 @@ public class PassengerGenerationRuleListValidationTest {
 
         PassengerGenerationRuleList item = PassengerGenerationRuleList.of(HOLIDAY, workDayRulesOfGagarina);
 
-        Set<ConstraintViolation<PassengerGenerationRuleList>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<PassengerGenerationRuleList>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         constraintViolations.forEach(System.out::println);
 
         assertEquals(1, constraintViolations.size());
@@ -79,7 +79,7 @@ public class PassengerGenerationRuleListValidationTest {
 
         PassengerGenerationRuleList item = PassengerGenerationRuleList.of(HOLIDAY, workDayRulesOfGagarina);
 
-        Set<ConstraintViolation<PassengerGenerationRuleList>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<PassengerGenerationRuleList>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         constraintViolations.forEach(System.out::println);
 
         assertEquals(1, constraintViolations.size());
@@ -101,7 +101,7 @@ public class PassengerGenerationRuleListValidationTest {
 
         PassengerGenerationRuleList item = PassengerGenerationRuleList.of(HOLIDAY, workDayRulesOfGagarina);
 
-        Set<ConstraintViolation<PassengerGenerationRuleList>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<PassengerGenerationRuleList>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         constraintViolations.forEach(System.out::println);
 
         assertEquals(1, constraintViolations.size());
@@ -113,7 +113,7 @@ public class PassengerGenerationRuleListValidationTest {
         List<PassengerGenerationRule> workDayRulesOfGagarina = new ArrayList<>();
         PassengerGenerationRuleList item = PassengerGenerationRuleList.of(HOLIDAY, workDayRulesOfGagarina);
 
-        Set<ConstraintViolation<PassengerGenerationRuleList>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<PassengerGenerationRuleList>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         constraintViolations.forEach(System.out::println);
 
         assertEquals(1, constraintViolations.size());
@@ -132,7 +132,7 @@ public class PassengerGenerationRuleListValidationTest {
 
         PassengerGenerationRuleList item = PassengerGenerationRuleList.of(HOLIDAY, workDayRulesOfGagarina);
 
-        Set<ConstraintViolation<PassengerGenerationRuleList>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<PassengerGenerationRuleList>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         constraintViolations.forEach(System.out::println);
 
         assertEquals(1, constraintViolations.size());

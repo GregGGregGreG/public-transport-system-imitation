@@ -30,7 +30,7 @@ public class RouteTrafficRuleValidationTest {
     @Test
     public void checkRouteTrafficRuleListValidationIsNull() {
         RouteTrafficRule item = RouteTrafficRule.of(0, 0, null, null);
-        Set<ConstraintViolation<RouteTrafficRule>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<RouteTrafficRule>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         constraintViolations.forEach(System.out::println);
         assertEquals(2, constraintViolations.size());
         constraintViolations.forEach(constraint -> assertEquals("may not be null", constraint.getMessage()));
@@ -39,7 +39,7 @@ public class RouteTrafficRuleValidationTest {
     @Test
     public void checkRouteTrafficRuleListValidationMin() {
         RouteTrafficRule item = RouteTrafficRule.of(-1, -1, LocalTime.now(), LocalTime.now());
-        Set<ConstraintViolation<RouteTrafficRule>> constraintViolations = validator.validate(item, RouteListSequence.class);
+        Set<ConstraintViolation<RouteTrafficRule>> constraintViolations = validator.validate(item, ImitationSourceSequence.class);
         constraintViolations.forEach(System.out::println);
         assertEquals(2, constraintViolations.size());
         constraintViolations.forEach(constraint -> assertEquals("must be greater than or equal toXML 1", constraint.getMessage()));

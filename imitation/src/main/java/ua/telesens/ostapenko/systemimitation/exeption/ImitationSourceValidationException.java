@@ -10,22 +10,17 @@ import java.util.List;
  * @author root
  * @since 18.01.16
  */
-public class RouteListValidationException extends ImitationException {
+public class ImitationSourceValidationException extends ImitationException {
 
     private static final String SEPARATOR = "\n-------------------------------";
     private List<String> stuff = new ArrayList<>();
 
-    public RouteListValidationException(String message) {
+    public ImitationSourceValidationException(String message) {
         super(message);
     }
 
-    public RouteListValidationException(String message, Throwable cause) {
+    public ImitationSourceValidationException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-
-    public RouteListValidationException(Throwable cause) {
-        super(cause);
     }
 
 
@@ -44,7 +39,7 @@ public class RouteListValidationException extends ImitationException {
             result.append(super.getMessage());
         }
         if (!result.toString().endsWith(SEPARATOR)) {
-            result.append("\n---- Debugging information ----\n");
+            result.append("\n---- Validation error information ----\n");
         }
         for (Iterator iterator = keys(); iterator.hasNext(); ) {
             String k = (String) iterator.next();
