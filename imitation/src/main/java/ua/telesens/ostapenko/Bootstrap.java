@@ -59,9 +59,10 @@ public class Bootstrap {
             }
 
             System.setProperty("path.report.folder", file.getAbsolutePath());
-
+            System.out.println("dd");
+        } else {
+            throw new IllegalStateException("Not found root folder" + PROPERTY_NAME_ROOT_FOLDER);
         }
-
     }
 
     private void readProperties() {

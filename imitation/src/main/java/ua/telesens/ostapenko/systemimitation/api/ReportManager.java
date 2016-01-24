@@ -15,7 +15,9 @@ public interface ReportManager {
 
     ReportManager toJSON();
 
-    ReportManager toDB(ReportDAO reportDAO) ;
+    ReportManager toDB(ReportDAO reportDAO);
 
-    Report get();
+    Report getData();
+
+    ReportManager setData(Report data);
 }

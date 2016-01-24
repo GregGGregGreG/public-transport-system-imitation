@@ -2,7 +2,6 @@ package ua.telesens.ostapenko.systemimitation.service;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.telesens.ostapenko.systemimitation.api.Logger;
-import ua.telesens.ostapenko.systemimitation.api.ReportManager;
 import ua.telesens.ostapenko.systemimitation.model.internal.Bus;
 import ua.telesens.ostapenko.systemimitation.model.internal.Report;
 import ua.telesens.ostapenko.systemimitation.model.internal.observer.BusObserver;
@@ -30,14 +29,14 @@ public class BusSystemImitationStatistic {
         return new BusSystemImitationStatistic(systemImitation);
     }
 
-    public ReportManager execute() {
+    public Report execute() {
         Instant start = Instant.now();
         log.info(String.format(FORMAT, "Start imitation in", start));
         systemImitation.run();
         Instant end = Instant.now();
         log.info(String.format(FORMAT, "Stop imitation in \t", end));
         log.info(String.format(FORMAT, "Duration imitation in \t", Duration.between(start, end)));
-        return ReportManagerImpl.of(createReport());
+        return createReport();
     }
 
     public void setLogger(Logger logger) {

@@ -3,11 +3,13 @@ package ua.telesens.ostapenko.systemimitation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ua.telesens.ostapenko.systemimitation.api.ReportManager;
 import ua.telesens.ostapenko.systemimitation.api.RouteListValidator;
 import ua.telesens.ostapenko.systemimitation.dao.ReportDAO;
 import ua.telesens.ostapenko.systemimitation.dao.impl.mysql.MySQlDAOFactory;
 import ua.telesens.ostapenko.systemimitation.exeption.ImitationException;
 import ua.telesens.ostapenko.systemimitation.model.internal.ImitationSource;
+import ua.telesens.ostapenko.systemimitation.model.internal.Report;
 import ua.telesens.ostapenko.systemimitation.service.*;
 
 /**
@@ -20,6 +22,9 @@ public class ImitationRunner {
 
     @Autowired
     private MySQlDAOFactory mySQlDAOFactory;
+
+    @Autowired
+    private ReportManager reportManager;
 
     public void run(String path) {
         try {
@@ -47,7 +52,10 @@ public class ImitationRunner {
 
         XStreamXMLReportConverter xmlConverter = new XStreamXMLReportConverter();
 
-        imitationStatistic.execute()
+        Report report = imitationStatistic.execute();
+
+        reportManager
+                .setData(report)
                 .show()
                 .toDB(reportDAO)
                 .toJSON()

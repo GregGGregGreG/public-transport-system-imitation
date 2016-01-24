@@ -1,11 +1,11 @@
 package ua.telesens.ostapenko.systemimitation.service;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 import ua.telesens.ostapenko.systemimitation.api.ReportManager;
 import ua.telesens.ostapenko.systemimitation.api.XMLReportConverter;
 import ua.telesens.ostapenko.systemimitation.dao.ReportDAO;
@@ -20,8 +20,8 @@ import java.util.Objects;
  */
 @Slf4j
 @Getter
-@RequiredArgsConstructor(staticName = "of")
 @ToString
+@Component
 @PropertySource("classpath:application.properties")
 public class ReportManagerImpl implements ReportManager {
 
@@ -34,7 +34,19 @@ public class ReportManagerImpl implements ReportManager {
     private String PROPERTY_PATH_REPORT_FOLDER;
 
     private static final String FORMAT = "%-40s%-20s";
-    private final Report data;
+
+    @Getter
+    private Report data;
+
+    public ReportManagerImpl() {
+
+    }
+
+    @Override
+    public ReportManager setData(Report data) {
+        this.data = data;
+        return this;
+    }
 
     @Override
     public ReportManager show() {
@@ -59,6 +71,7 @@ public class ReportManagerImpl implements ReportManager {
         String path = PROPERTY_PATH_REPORT_FOLDER + "/"
                 + PROPERTY_NAME_REPORT_FILE + "_" +
                 LocalDateTime.now() + "." + XML;
+        log.debug("Path from dave report \t"+path);
         converter.toXML(data, path);
         return this;
     }
@@ -93,8 +106,4 @@ public class ReportManagerImpl implements ReportManager {
         return this;
     }
 
-    @Override
-    public Report get() {
-        return data;
-    }
 }
