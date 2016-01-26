@@ -98,7 +98,7 @@
                     <descriptors>
                         <descriptor>src/main/assembly/assembly.xml</descriptor>
                     </descriptors>
-                    <finalName>imitationConsole-0.3</finalName>
+                    <finalName>imitation-0.3</finalName>
                 </configuration>
             </plugin>
             <plugin>

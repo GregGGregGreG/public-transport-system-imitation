@@ -67,7 +67,6 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
             notifyAllObservers();
             nextStep();
         }
-        System.out.println(imitationTime);
     }
 
     @Override
@@ -158,4 +157,3 @@ public class BusSystemImitation implements SystemImitation, SystemImitationObser
         }
     }
 }
-

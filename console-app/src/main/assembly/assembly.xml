@@ -20,7 +20,6 @@
     </dependencySets>
 
     <fileSets>
-
         <!--
             Adds startup scripts to the root directory of zip package. The startup
             scripts are from the src/main/scripts directory.
