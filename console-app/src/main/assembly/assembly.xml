@@ -29,6 +29,7 @@
             <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>startup.*</include>
+                <include>*.properties</include>
             </includes>
         </fileSet>
         <!--
