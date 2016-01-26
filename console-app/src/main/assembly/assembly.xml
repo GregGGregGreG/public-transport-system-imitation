@@ -14,6 +14,7 @@
             -->
             <useProjectArtifact>false</useProjectArtifact>
             <outputDirectory>lib</outputDirectory>
+
             <unpack>false</unpack>
         </dependencySet>
     </dependencySets>
@@ -40,6 +41,17 @@
             <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>*.jar</include>
+            </includes>
+        </fileSet>
+        <!--
+            Adds the xml file of example routes.
+        -->
+        <fileSet>
+            <directory>${directory}/example</directory>
+            <outputDirectory>example</outputDirectory>
+            <includes>
+                <include>*.xml</include>
+                <include>*.json</include>
             </includes>
         </fileSet>
     </fileSets>
