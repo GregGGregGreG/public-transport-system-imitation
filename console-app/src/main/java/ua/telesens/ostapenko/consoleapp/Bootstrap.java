@@ -27,9 +27,8 @@ public final class Bootstrap {
 
         Path path = Paths.get(workingDir);
         Path fileName = path.getFileName();
-        System.out.println(fileName);
+
         Path parent = path.getParent();
-        System.out.println(parent);
 
         if (fileName.toString().equals(PROPERTY_NAME_ROOT_FOLDER)) {
             initLog(parent);
@@ -60,10 +59,10 @@ public final class Bootstrap {
             String PROPERTY_PATH_PROPERTIES_IMITATION = properties.getProperty("path.imitation.file");
             System.setProperty("path.properties.imitation.file", PROPERTY_PATH_PROPERTIES_IMITATION);
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            showMessage("Error read imitation properties file", imitation.toUri().getPath(), false);
+            System.exit(3);
+
         }
     }
 
@@ -144,22 +143,6 @@ public final class Bootstrap {
         PrintStream stream = error ? System.err : System.out;
         stream.println("\n" + title + ": " + message);
     }
-
-//    public static void checkARGS(String args) {
-//        Path file = Paths.get(args);
-//        if (!Files.isRegularFile(file)) {
-//            log.info("File not regular");
-//            System.exit(3);
-//        }
-//        if (!Files.isReadable(file)) {
-//            log.info("File not readable");
-//            System.exit(3);
-//        }
-//        if (!Files.isExecutable(file)) {
-//            log.info("File not executable ");
-//            System.exit(3);
-//        }
-//    }
 
     public static void main(String[] args) {
         new Bootstrap().installPatch();

@@ -66,9 +66,7 @@ public class ImitationRunner {
 
         reportManager
                 .setData(report)
-                .show()
                 .toDB(reportDAO)
-                .toJSON()
                 .toXML(xmlConverter);
     }
 }
